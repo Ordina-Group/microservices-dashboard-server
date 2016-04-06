@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/ordina-jworks/microservices-dashboard-server/badge.svg?branch=master)](https://coveralls.io/github/ordina-jworks/microservices-dashboard-server?branch=master)
+
 # microservices-dashboard-server
 
 ## Overview
