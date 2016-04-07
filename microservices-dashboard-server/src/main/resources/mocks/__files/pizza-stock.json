@@ -1,10 +1,27 @@
 {
-  "description": "Spring Cloud Eureka Discovery Client",
   "status": "UP",
-  "bmbProvisionningApi": {
+  "stockVerification": {
     "status": "UNKNOWN",
+    "type": "REST",
+    "group": "STC"
+  },
+  "sapStockCheck": {
+    "status": "UP",
+    "version": "1.0",
     "type": "SOAP",
-    "group": "CSL"
+    "group": "SAP"
+  },
+  "csaMaterialReservationQueue": {
+    "status": "UNKNOWN",
+    "type": "JMS",
+    "group": "CSA"
+  },
+  "jms": {
+    "status": "UP",
+    "provider": "SonicMQ/Java",
+    "broker": "tcp://huehs02992:2506,tcp://huehs02993:2506",
+    "domain": "esb_s21",
+    "username": "andreasevers"
   },
   "discoveryComposite": {
     "description": "Spring Cloud Eureka Discovery Client",
@@ -13,7 +30,7 @@
       "description": "Spring Cloud Eureka Discovery Client",
       "status": "UP",
       "services": [
-        "webshop-business-configuration",
+        "webshop-catalogue",
         "customer-group",
         "customer-base",
         "customer-access",
@@ -21,8 +38,8 @@
         "user-avatar",
         "tariff-charges",
         "admin",
-        "user-application-trusts",
-        "billing-transactions",
+        "pizza-feedback",
+        "pizza-transactions",
         "user-preferences",
         "customer-addresses",
         "shop-management",
@@ -31,7 +48,7 @@
         "zuul",
         "customer-finance",
         "encryption",
-        "webshop-businessrules-engine",
+        "webshop-accounts",
         "transport",
         "loyalty-program",
         "web-feedback",
@@ -40,27 +57,25 @@
         "installbase",
         "billing-complaints",
         "hystrix",
-        "network-characteristics",
-        "product-stock",
+        "italian-food",
         "offers",
         "billing-replicator",
+        "usage",
         "customer-gear",
         "order-processor",
-        "user-billing-structure",
         "prices",
         "awards",
         "billing-payments",
         "user",
         "customer-access-numbers",
         "customer-administrators",
-        "quote-management",
+        "pizza-management",
         "billing-accounts",
+        "marketing",
         "agenda",
         "customer-management",
-        "real-time-usage-prepaid",
-        "historical-usage-prepaid",
-        "marketing",
         "company-cars",
+        "pizza-stock",
         "ordering-cakes",
         "bill-downloader"
       ]
@@ -69,20 +84,17 @@
       "description": "Remote status from Eureka server",
       "status": "UP",
       "applications": {
-        "WEBSHOP-BUSINESS-CONFIGURATION": 1,
-        "ARCHETYPE-TEST": 0,
-        "CUSTOMER-BILLING-STRUCTURE": 0,
+        "WEBSHOP-CATALOGUE": 1,
         "CUSTOMER-GROUP": 1,
         "CUSTOMER-BASE": 1,
         "CUSTOMER-ACCESS": 1,
         "ORDERING-PETS": 1,
         "USER-AVATAR": 1,
-        "RENUNCIATION": 0,
         "TARIFF-CHARGES": 2,
         "ADMIN": 1,
-        "USER-APPLICATION-TRUSTS": 1,
+        "PIZZA-FEEDBACK": 1,
         "BILL-DOWNLOADER": 1,
-        "BILLING-TRANSACTIONS": 1,
+        "PIZZA-TRANSACTIONS": 1,
         "USER-PREFERENCES": 1,
         "CUSTOMER-ADDRESSES": 1,
         "ORDERING-CAKES": 1,
@@ -92,7 +104,7 @@
         "ZUUL": 1,
         "CUSTOMER-FINANCE": 1,
         "ENCRYPTION": 1,
-        "WEBSHOP-BUSINESSRULES-ENGINE": 1,
+        "WEBSHOP-ACCOUNTS": 1,
         "TRANSPORT": 1,
         "LOYALTY-PROGRAM": 2,
         "WEB-FEEDBACK": 1,
@@ -101,29 +113,25 @@
         "INSTALLBASE": 1,
         "BILLING-COMPLAINTS": 1,
         "HYSTRIX": 1,
-        "NETWORK-CHARACTERISTICS": 1,
-        "PRODUCT-STOCK": 1,
+        "ITALIAN-FOOD": 1,
+        "PIZZA-STOCK": 1,
         "OFFERS": 1,
-        "PREPAID-IDENTIFICATION": 0,
         "BILLING-REPLICATOR": 1,
-        "REAL-TIME-USAGE-PREPAID": 1,
+        "USAGE": 1,
         "CUSTOMER-GEAR": 1,
         "ORDER-PROCESSOR": 1,
-        "USER-BILLING-STRUCTURE": 1,
         "PRICES": 1,
         "AWARDS": 1,
         "BILLING-PAYMENTS": 1,
-        "EUREKA": 0,
         "USER": 1,
         "CUSTOMER-ACCESS-NUMBERS": 1,
         "ORDERING-LOYALTY": 0,
         "CUSTOMER-ADMINISTRATORS": 1,
-        "QUOTE-MANAGEMENT": 1,
+        "PIZZA-MANAGEMENT": 1,
         "BILLING-ACCOUNTS": 1,
         "MARKETING": 1,
         "AGENDA": 1,
         "CUSTOMER-MANAGEMENT": 1,
-        "HISTORICAL-USAGE-PREPAID": 1,
         "COMPANY-CARS": 1
       }
     }
@@ -142,5 +150,26 @@
   },
   "hystrix": {
     "status": "UP"
+  },
+  "stockDataSource_": {
+    "status": "UP",
+    "database": "Oracle",
+    "hello": "Hello",
+    "type": "DB",
+    "group": "STC"
+  },
+  "productCacheDataSource_": {
+    "status": "UP",
+    "database": "Microsoft SQL Server",
+    "hello": 1,
+    "type": "DB",
+    "group": "PRD"
+  },
+  "productDataSource_": {
+    "status": "UP",
+    "database": "Oracle",
+    "hello": "Hello",
+    "type": "DB",
+    "group": "PRD"
   }
 }

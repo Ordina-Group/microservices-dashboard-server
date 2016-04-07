@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/quote-management"
+    "url": "/pizza-feedback"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "quote-management-index.json",
+    "bodyFileName": "pizza-feedback-index.json",
     "headers": {
       "Content-Type": "application/json"
     }

@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/network-characteristics"
+    "url": "/pizza-stock/actuator/health"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "network-characteristics-index.json",
+    "bodyFileName": "pizza-stock.json",
     "headers": {
       "Content-Type": "application/json"
     }

@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/real-time-usage-prepaid/actuator/health"
+    "url": "/pizza-stock"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "real-time-usage-prepaid.json",
+    "bodyFileName": "pizza-stock-index.json",
     "headers": {
       "Content-Type": "application/json"
     }

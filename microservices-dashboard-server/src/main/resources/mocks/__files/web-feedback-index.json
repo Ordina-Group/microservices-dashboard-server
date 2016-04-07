@@ -1,17 +1,17 @@
 {
   "_links": {
-    "wf:echo": {
-      "href": "http://host0018.local:8301/web-feedback/echo{?echoMessage}",
+    "web:types": {
+      "href": "http://host0018.local:8301/web-feedback/types",
       "templated": true
     },
-    "wf:feedback": {
-      "href": "http://host0018.local:8301/web-feedback/supportarticle/{id}/feedback",
+    "web:feedback": {
+      "href": "http://host0018.local:8301/web-feedback/support-article/{id}/feedback",
       "templated": true
     },
     "curies": [
       {
         "href": "/web-feedback/generated-docs/api-guide.html#resources-{rel}",
-        "name": "wf",
+        "name": "web",
         "templated": true
       }
     ]

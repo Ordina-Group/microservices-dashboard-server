@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/real-time-usage-prepaid"
+    "url": "/webshop-accounts/actuator/health"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "real-time-usage-prepaid-index.json",
+    "bodyFileName": "webshop-accounts.json",
     "headers": {
       "Content-Type": "application/json"
     }

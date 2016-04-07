@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/quote-management/actuator/health"
+    "url": "/italian-food/actuator/health"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "quote-management.json",
+    "bodyFileName": "italian-food.json",
     "headers": {
       "Content-Type": "application/json"
     }

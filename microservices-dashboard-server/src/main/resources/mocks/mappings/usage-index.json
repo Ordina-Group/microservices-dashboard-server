@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/webshop-businessrules-engine"
+    "url": "/usage"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "webshop-businessrules-engine-index.json",
+    "bodyFileName": "usage-index.json",
     "headers": {
       "Content-Type": "application/json"
     }

@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/product-stock/actuator/health"
+    "url": "/pizza-feedback/actuator/health"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "product-stock.json",
+    "bodyFileName": "pizza-feedback.json",
     "headers": {
       "Content-Type": "application/json"
     }

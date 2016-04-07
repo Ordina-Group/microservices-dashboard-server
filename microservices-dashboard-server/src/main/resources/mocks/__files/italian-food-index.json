@@ -1,0 +1,15 @@
+{
+  "_links": {
+    "ita:types": {
+      "href": "http://host0015.local:8281/italian-food/type/{type}",
+      "templated": true
+    },
+    "curies": [
+      {
+        "href": "/italian-food/generated-docs/api-guide.html#resources-{rel}",
+        "name": "ita",
+        "templated": true
+      }
+    ]
+  }
+}

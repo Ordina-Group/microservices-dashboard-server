@@ -1,0 +1,15 @@
+{
+  "_links": {
+    "usa:usage": {
+      "href": "http://host0018.local:8241/usage/usage/{msisdn}",
+      "templated": true
+    },
+    "curies": [
+      {
+        "href": "/usage/generated-docs/api-guide.html#resources-{rel}",
+        "name": "usa",
+        "templated": true
+      }
+    ]
+  }
+}

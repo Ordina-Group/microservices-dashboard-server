@@ -1,0 +1,15 @@
+{
+  "_links": {
+    "cat:products": {
+      "href": "http://host0019.local:8101/webshop-catalogue/products",
+      "templated": true
+    },
+    "curies": [
+      {
+        "href": "/webshop-catalogue/generated-docs/api-guide.html#resources-{rel}",
+        "name": "cat",
+        "templated": true
+      }
+    ]
+  }
+}

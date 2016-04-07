@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/webshop-businessrules-engine/actuator/health"
+    "url": "/pizza-management"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "webshop-businessrules-engine.json",
+    "bodyFileName": "pizza-management-index.json",
     "headers": {
       "Content-Type": "application/json"
     }

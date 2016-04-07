@@ -1,0 +1,48 @@
+{
+  "_links": {
+    "sto:consult-stock-amounts": {
+      "href": "http://host0018.local:8201/pizza-stock/stock-amounts",
+      "templated": true
+    },
+    "sto:pizza-stocks": {
+      "href": "http://host0018.local:8201/pizza-stock/pizza-stocks"
+    },
+    "sto:pizza-stock": {
+      "href": "http://host0018.local:8201/pizza-stock/pizza/{pizzaId}/pizza-stock",
+      "templated": true
+    },
+    "sto:update-pizza-stock": {
+      "href": "http://host0018.local:8201/pizza-stock/pizza/{pizzaId}/pizza-stock",
+      "templated": true
+    },
+    "sto:pizza-stock-changes": {
+      "href": "http://host0018.local:8201/pizza-stock/pizza/{pizzaId}/pizza-stock/changes",
+      "templated": true
+    },
+    "sto:pizza-stock-changes": {
+      "href": "http://host0018.local:8201/pizza-stock/pizza-stocks/changes"
+    },
+    "sto:pizza-stocks-availability": {
+      "href": "http://host0018.local:8201/pizza-stock/shops/pizza-stock-availabilities"
+    },
+    "sto:pizza-stock-locator": {
+      "href": "http://host0018.local:8201/pizza-stock/pizza-stock-locator/{type}/{locationId}",
+      "templated": true
+    },
+    "sto:pizza-stock-reservation": {
+      "href": "http://host0018.local:8201/pizza-stock/order/{orderId}/stock-reservation?email={email}",
+      "templated": true
+    },
+    "sto:cancel-reservation": {
+      "href": "http://host0018.local:8201/pizza-stock/order/{orderId}/stock-reservation",
+      "templated": true
+    },
+    "curies": [
+      {
+        "href": "/pizza-stock/generated-docs/api-guide.html#resources-{rel}",
+        "name": "sto",
+        "templated": true
+      }
+    ]
+  }
+}

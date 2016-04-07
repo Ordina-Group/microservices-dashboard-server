@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/network-characteristics/actuator/health"
+    "url": "/webshop-catalogue"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "network-characteristics.json",
+    "bodyFileName": "webshop-catalogue-index.json",
     "headers": {
       "Content-Type": "application/json"
     }

@@ -1,24 +1,24 @@
 {
   "_links": {
-    "pg:sign": {
-      "href": "http://host0018.local:8101/payment-gateway/ogone/sign"
+    "pay:signature": {
+      "href": "http://host0018.local:8101/payment-gateway/signature"
     },
-    "pg:verify": {
-      "href": "http://host0018.local:8101/payment-gateway/ogone/verify?account={account}",
+    "pay:verification": {
+      "href": "http://host0018.local:8101/payment-gateway/verification?account={account}",
       "templated": true
     },
-    "pg:voucher": {
+    "pay:voucher": {
       "href": "http://host0018.local:8101/payment-gateway/voucher/{voucherReferenceId}",
       "templated": true
     },
-    "pg:redeem": {
+    "pay:voucher-redemption": {
       "href": "http://host0018.local:8101/payment-gateway/voucher/{voucherReferenceId}",
       "templated": true
     },
     "curies": [
       {
         "href": "/payment-gateway/generated-docs/api-guide.html#resources-{rel}",
-        "name": "pg",
+        "name": "pay",
         "templated": true
       }
     ]

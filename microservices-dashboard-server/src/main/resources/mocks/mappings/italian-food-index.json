@@ -1,11 +1,11 @@
 {
   "request": {
     "method": "GET",
-    "url": "/user-application-trusts/actuator/health"
+    "url": "/italian-food"
   },
   "response": {
     "status": 200,
-    "bodyFileName": "user-application-trusts.json",
+    "bodyFileName": "italian-food-index.json",
     "headers": {
       "Content-Type": "application/json"
     }

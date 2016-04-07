@@ -1,21 +1,21 @@
 {
   "_links": {
-    "sm:echo": {
-      "href": "http://host0018.local:8281/shop-management/echo{?echoMessage}",
+    "sho:management": {
+      "href": "http://host0018.local:8281/shop-management/management",
       "templated": true
     },
-    "sm:shops": {
-      "href": "http://host0018.local:8281/shop-management/shops{?clickAndCollect}",
+    "sho:shops": {
+      "href": "http://host0018.local:8281/shop-management/shops",
       "templated": true
     },
-    "sm:shop": {
+    "sho:shop": {
       "href": "http://host0018.local:8281/shop-management/shop/{id}?context={context}",
       "templated": true
     },
     "curies": [
       {
         "href": "/shop-management/generated-docs/api-guide.html#resources-{rel}",
-        "name": "sm",
+        "name": "sho",
         "templated": true
       }
     ]

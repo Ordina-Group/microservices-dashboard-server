@@ -5,15 +5,15 @@
       "templated": true
     },
     "us:roles": {
-      "href": "http://host0019.local:8161/user/user/roles?oneCDB={oneCDB}",
+      "href": "http://host0019.local:8161/user/user/roles",
       "templated": true
     },
     "us:role": {
-      "href": "http://host0019.local:8161/user/user/{globalId}/role{?mobile}",
+      "href": "http://host0019.local:8161/user/user/{userId}/role{?mobile}",
       "templated": true
     },
-    "us:passwordverification": {
-      "href": "http://host0019.local:8161/user/user/passwordverification"
+    "us:password-verification": {
+      "href": "http://host0019.local:8161/user/user/password-verification"
     },
     "curies": [
       {

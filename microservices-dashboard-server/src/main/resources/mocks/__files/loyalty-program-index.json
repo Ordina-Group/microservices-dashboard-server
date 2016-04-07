@@ -1,26 +1,26 @@
 {
   "_links": {
-    "lp:loyaltyProgramSubscription": {
-      "href": "http://host0020.local:8301/loyalty-program/customer/{customerId}/loyaltyprogramsubscription",
+    "lp:loyalty-program-subscription": {
+      "href": "http://host0020.local:8301/loyalty-program/customer/{customerId}/loyalty-program-subscription",
       "templated": true
     },
-    "lp:loyaltyProgramSubscriptionRestricted": {
-      "href": "http://host0020.local:8301/loyalty-program/customer/loyaltyprogramsubscription"
+    "lp:loyalty-program-subscription-details": {
+      "href": "http://host0020.local:8301/loyalty-program/customer/loyalty-program-subscription"
     },
-    "lp:loyaltyPointsTransferEligibility": {
-      "href": "http://host0020.local:8301/loyalty-program/eligibilityCheck/loyaltyProgramSubscription/{loyaltyProgramSubscriptionId}/transfer",
+    "lp:loyalty-points-transfer-eligibility": {
+      "href": "http://host0020.local:8301/loyalty-program/eligibility-check/loyalty-program-subscription/{loyalty-program-subscription-id}/transfer",
       "templated": true
     },
-    "lp:loyaltyeligibility": {
-      "href": "http://host0020.local:8301/loyalty-program/customer/{customerId}/loyaltyeligibility",
+    "lp:loyalty-eligibility": {
+      "href": "http://host0020.local:8301/loyalty-program/customer/{customerId}/loyalty-eligibility",
       "templated": true
     },
-    "lp:loyaltyPointsHistory": {
-      "href": "http://host0020.local:8301/loyalty-program/customer/{customerId}/loyaltypoints{?fromDate,toDate}",
+    "lp:loyalty-points-history": {
+      "href": "http://host0020.local:8301/loyalty-program/customer/{customerId}/loyalty-points{?fromDate,toDate}",
       "templated": true
     },
-    "lp:loyaltyPointsDebitTransaction": {
-      "href": "http://host0020.local:8301/loyalty-program/loyaltyProgramSubscription/{loyaltyProgramSubscriptionId}/transaction/debit",
+    "lp:loyalty-points-transaction": {
+      "href": "http://host0020.local:8301/loyalty-program/loyalty-program-subscription/{loyaltyProgramSubscriptionId}/transaction",
       "templated": true
     },
     "curies": [

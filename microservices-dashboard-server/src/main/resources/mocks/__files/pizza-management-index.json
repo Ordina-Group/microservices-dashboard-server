@@ -1,0 +1,19 @@
+{
+  "_links": {
+    "piz:pizzas": {
+      "href": "http://host0019.local:8041/pizza-management/pizzas/{hash}{?language}",
+      "templated": true
+    },
+    "piz:pizza-by-customer": {
+      "href": "http://host0019.local:8041/pizza-management/pizzas?customer-id={customerId}{&language}",
+      "templated": true
+    },
+    "curies": [
+      {
+        "href": "/pizza-management/generated-docs/api-guide.html#resources-{rel}",
+        "name": "piz",
+        "templated": true
+      }
+    ]
+  }
+}

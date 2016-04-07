@@ -1,175 +1,175 @@
 {
   "_links": {
-    "sc:fulfilment": {
+    "bas:fulfilment": {
       "href": "http://host0015.local:8341/shopping-basket/fulfilment"
     },
-    "sc:cartLocation": {
+    "bas:cart-location": {
       "href": "http://host0015.local:8341/shopping-basket/carts/exists"
     },
-    "sc:cart": {
+    "bas:cart": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}{?validate}",
       "templated": true
     },
-    "sc:installationPoints": {
+    "bas:installation-points": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/installation-points",
       "templated": true
     },
-    "sc:validInstallationPoint": {
-      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/installation-points/{secretNumber}/validate",
+    "bas:valid-installation-point": {
+      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/installation-points/{secretNumber}/validation",
       "templated": true
     },
-    "sc:installationDate": {
+    "bas:installation-date": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/installationDate",
       "templated": true
     },
-    "sc:kialaId": {
-      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/kialaId",
+    "bas:basket": {
+      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/basket",
       "templated": true
     },
-    "sc:dynalogicInstallationDate": {
-      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/dynalogicInstallDate",
+    "bas:actual-installation-date": {
+      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/actual-install-date",
       "templated": true
     },
-    "sc:statusCheckout": {
-      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/statusCheckout",
+    "bas:status-checkout": {
+      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/status-checkout",
       "templated": true
     },
-    "sc:shopId": {
+    "bas:shop-id": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/shop{?shopId}",
       "templated": true
     },
-    "sc:backends": {
+    "bas:backends": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/backends",
       "templated": true
     },
-    "sc:cartItemMove": {
+    "bas:cart-item-move": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/items/{cartItemId}/move",
       "templated": true
     },
-    "sc:product": {
+    "bas:product": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/products/{productId}",
       "templated": true
     },
-    "sc:cartItems": {
+    "bas:cart-items": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/items{?specialEvent,shopId}",
       "templated": true
     },
-    "sc:cartItem": {
+    "bas:cart-item": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/items/{cartItemId}",
       "templated": true
     },
-    "sc:customer": {
+    "bas:customer": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/customer",
       "templated": true
     },
-    "sc:customerAuthorizations": {
-      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/customerAuthorizations",
+    "bas:customer-authorizations": {
+      "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/customer-authorizations",
       "templated": true
     },
-    "sc:address": {
+    "bas:address": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/address/{addressId}",
       "templated": true
     },
-    "sc:addresses": {
+    "bas:addresses": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/address",
       "templated": true
     },
-    "sc:wizard": {
+    "bas:wizard": {
       "href": "http://host0015.local:8341/shopping-basket/cart-configuration/{cartId}",
       "templated": true
     },
-    "sc:partialWizard": {
+    "bas:partial-wizard": {
       "href": "http://host0015.local:8341/shopping-basket/cart-configuration/partial/{cartId}",
       "templated": true
     },
-    "sc:action": {
+    "bas:action": {
       "href": "http://host0015.local:8341/shopping-basket/cart-configuration/action/{cartId}",
       "templated": true
     },
-    "sc:actions": {
+    "bas:actions": {
       "href": "http://host0015.local:8341/shopping-basket/cart-configuration/actions/{cartId}",
       "templated": true
     },
-    "sc:products": {
+    "bas:products": {
       "href": "http://host0015.local:8341/shopping-basket/cart-configuration/{cartId}/upselling-options",
       "templated": true
     },
-    "sc:order": {
+    "bas:order": {
       "href": "http://host0015.local:8341/shopping-basket/order?cartId={cartId}",
       "templated": true
     },
-    "sc:send": {
+    "bas:send": {
       "href": "http://host0015.local:8341/shopping-basket/order/send?cartId={cartId}",
       "templated": true
     },
-    "sc:sendCart": {
+    "bas:sendCart": {
       "href": "http://host0015.local:8341/shopping-basket/order/breakRetrieve"
     },
-    "sc:pay": {
+    "bas:pay": {
       "href": "http://host0015.local:8341/shopping-basket/order/payment?cartId={cartId}",
       "templated": true
     },
-    "sc:reserve": {
+    "bas:reserve": {
       "href": "http://host0015.local:8341/shopping-basket/order/reservation?cartId={cartId}",
       "templated": true
     },
-    "sc:verify": {
+    "bas:verify": {
       "href": "http://host0015.local:8341/shopping-basket/order/payment/success"
     },
-    "sc:cancel": {
+    "bas:cancel": {
       "href": "http://host0015.local:8341/shopping-basket/order/payment/failed"
     },
-    "sc:productReservation": {
+    "bas:product-reservation": {
       "href": "http://host0015.local:8341/shopping-basket/order/{masterOrderId}?email={email}",
       "templated": true
     },
-    "sc:voucher": {
+    "bas:voucher": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/voucher/{voucherReferenceId}",
       "templated": true
     },
-    "sc:vouchers": {
+    "bas:vouchers": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/voucher",
       "templated": true
     },
-    "sc:cartAvailable": {
+    "bas:cart-available": {
       "href": "http://host0015.local:8341/shopping-basket/internal/availability/{cdbId}",
       "templated": true
     },
-    "sc:cartQuote": {
+    "bas:cart-quote": {
       "href": "http://host0015.local:8341/shopping-basket/internal/carts/{hash}",
       "templated": true
     },
-    "sc:quoteOrder": {
+    "bas:quote-order": {
       "href": "http://host0015.local:8341/shopping-basket/internal/carts/{hash}/order{?cdbId}",
       "templated": true
     },
-    "sc:quoteConfirm": {
+    "bas:quote-confirm": {
       "href": "http://host0015.local:8341/shopping-basket/internal/carts/{hash}",
       "templated": true
     },
-    "sc:cartForLead": {
-      "href": "http://host0015.local:8341/shopping-basket/internal/lead/{cartId}/forLead",
+    "bas:cart-for-lead": {
+      "href": "http://host0015.local:8341/shopping-basket/internal/lead/{cartId}/for-lead",
       "templated": true
     },
-    "sc:cardIdsForLead": {
-      "href": "http://host0015.local:8341/shopping-basket/internal/lead/cartIdsForLead"
+    "bas:cart-ids-for-lead": {
+      "href": "http://host0015.local:8341/shopping-basket/internal/lead/cart-ids-for-lead"
     },
-    "sc:flagLeadDone": {
-      "href": "http://host0015.local:8341/shopping-basket/internal/lead/{cartId}/flagLead/{leadStatus}",
+    "bas:flag-lead-done": {
+      "href": "http://host0015.local:8341/shopping-basket/internal/lead/{cartId}/flag-lead/{leadStatus}",
       "templated": true
     },
-    "sc:identifyByName": {
+    "bas:identify-by-name": {
       "href": "http://host0015.local:8341/shopping-basket/carts/{cartId}/identify",
       "templated": true
     },
-    "sc:failedOrders": {
-      "href": "http://host0015.local:8341/shopping-basket/internal/failedOrders{?limit,orderId}",
+    "bas:failed-orders": {
+      "href": "http://host0015.local:8341/shopping-basket/internal/failed-orders{?limit,orderId}",
       "templated": true
     },
     "curies": [
       {
         "href": "/shopping-basket/generated-docs/api-guide.html#resources-{rel}",
-        "name": "sc",
+        "name": "bas",
         "templated": true
       }
     ]

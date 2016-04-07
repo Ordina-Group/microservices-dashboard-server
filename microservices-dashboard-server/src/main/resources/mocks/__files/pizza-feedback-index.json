@@ -1,0 +1,17 @@
+{
+  "_links": {
+    "uat:application-trusts": {
+      "href": "http://host0018.local:8321/pizza-feedback/user/application/trusts"
+    },
+    "uat:application-trust": {
+      "href": "http://host0018.local:8321/pizza-feedback/user/application/trusts/{app-id}"
+    },
+    "curies": [
+      {
+        "href": "/pizza-feedback/generated-docs/api-guide.html#resources-{rel}",
+        "name": "uat",
+        "templated": true
+      }
+    ]
+  }
+}

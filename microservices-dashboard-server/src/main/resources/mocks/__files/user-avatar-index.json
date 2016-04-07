@@ -1,16 +1,16 @@
 {
   "_links": {
-    "ua:avatar": {
+    "ava:avatar": {
       "href": "http://host0018.local:8161/user-avatar/user/avatar"
     },
-    "ua:avatarById": {
-      "href": "http://host0018.local:8161/user-avatar/user/{globalId}/avatar",
+    "ava:avatar-by-id": {
+      "href": "http://host0018.local:8161/user-avatar/user/{userId}/avatar",
       "templated": true
     },
     "curies": [
       {
         "href": "/user-avatar/generated-docs/api-guide.html#resources-{rel}",
-        "name": "ua",
+        "name": "ava",
         "templated": true
       }
     ]

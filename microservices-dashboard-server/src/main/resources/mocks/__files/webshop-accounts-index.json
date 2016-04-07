@@ -1,0 +1,74 @@
+{
+  "_links": {
+    "wbre:cartValidation": {
+      "href": "http://host0019.local:8081/webshop-accounts/cart/validate"
+    },
+    "wbre:cartOrganization": {
+      "href": "http://host0019.local:8081/webshop-accounts/cart/organize/cart"
+    },
+    "wbre:upsell": {
+      "href": "http://host0019.local:8081/webshop-accounts/cart/upselling-products"
+    },
+    "wbre:wizard": {
+      "href": "http://host0019.local:8081/webshop-accounts/wizard/initial"
+    },
+    "wbre:wizardInitial": {
+      "href": "http://host0019.local:8081/webshop-accounts/wizard/partial"
+    },
+    "wbre:wizardFinal": {
+      "href": "http://host0019.local:8081/webshop-accounts/wizard/final"
+    },
+    "wbre:wizardAction": {
+      "href": "http://host0019.local:8081/webshop-accounts/wizard/action"
+    },
+    "wbre:wizardActions": {
+      "href": "http://host0019.local:8081/webshop-accounts/wizard/actions"
+    },
+    "wbre:deliveryMethods": {
+      "href": "http://host0019.local:8081/webshop-accounts/delivery/methods"
+    },
+    "wbre:cartPaymentDetails": {
+      "href": "http://host0019.local:8081/webshop-accounts/payment-details/cart"
+    },
+    "wbre:ogoneReservation": {
+      "href": "http://host0019.local:8081/webshop-accounts/payment-details/ogone/reservation-check"
+    },
+    "wbre:ogoneAccount": {
+      "href": "http://host0019.local:8081/webshop-accounts/payment-details/ogone/account"
+    },
+    "wbre:ogoneReservationAccount": {
+      "href": "http://host0019.local:8081/webshop-accounts/payment-details/ogone/account/reservation"
+    },
+    "wbre:defaultOrder": {
+      "href": "http://host0019.local:8081/webshop-accounts/order/default/generate"
+    },
+    "wbre:breakRetrieveOrder": {
+      "href": "http://host0019.local:8081/webshop-accounts/order/break/generate"
+    },
+    "wbre:saltoQuote": {
+      "href": "http://host0019.local:8081/webshop-accounts/order/retrieve/generate"
+    },
+    "wbre:saltoImport": {
+      "href": "http://host0019.local:8081/webshop-accounts/order/retrieve/import"
+    },
+    "wbre:instantFulfilment": {
+      "href": "http://host0019.local:8081/webshop-accounts/order/instantfulfilment/generate"
+    },
+    "wbre:cartBackends": {
+      "href": "http://host0019.local:8081/webshop-accounts/order/backend"
+    },
+    "wbre:createLead": {
+      "href": "http://host0019.local:8081/webshop-accounts/lead/create"
+    },
+    "wbre:liveChat": {
+      "href": "http://host0019.local:8081/webshop-accounts/livechat"
+    },
+    "curies": [
+      {
+        "href": "/webshop-accounts/generated-docs/api-guide.html#resources-{rel}",
+        "name": "wbre",
+        "templated": true
+      }
+    ]
+  }
+}
