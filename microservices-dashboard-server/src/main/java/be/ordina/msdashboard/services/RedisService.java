@@ -44,8 +44,8 @@ public class RedisService {
 	}
 
 	public void saveNode(final String nodeData) {
-		String nodeId = getNodeId(nodeData);
 		Node node = getNode(nodeData);
+		String nodeId = node.getId();
 		node.getDetails().put(_VIRTUAL_FLAG, true);
 		redisTemplate.opsForValue().set(REDIS_KEY_PREFIX + nodeId, node);
 	}
@@ -56,11 +56,6 @@ public class RedisService {
 
 	public void deleteAllNodes() {
 		redisTemplate.delete(redisTemplate.keys("*"));
-	}
-
-	private String getNodeId(String nodeData) {
-		Node node = getNode(nodeData);
-		return node.getId();
 	}
 
 	private Node getNode(String nodeData) {
