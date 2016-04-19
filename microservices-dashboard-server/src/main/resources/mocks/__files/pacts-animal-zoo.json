@@ -1,0 +1,140 @@
+{
+  "provider": {
+    "name": "Animal Service"
+  },
+  "consumer": {
+    "name": "Zoo App"
+  },
+  "interactions": [
+    {
+      "description": "a request for an alligator",
+      "provider_state": "there is an alligator named Mary",
+      "request": {
+        "method": "get",
+        "path": "/alligators/Mary",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        "body": {
+          "name": "Mary"
+        }
+      }
+    },
+    {
+      "description": "a request for an alligator",
+      "provider_state": "there is not an alligator named Mary",
+      "request": {
+        "method": "get",
+        "path": "/alligators/Mary",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 404
+      }
+    },
+    {
+      "description": "a request for an alligator",
+      "provider_state": "an error occurs retrieving an alligator",
+      "request": {
+        "method": "get",
+        "path": "/alligators/Mary",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        "body": {
+          "error": "Argh!!!"
+        }
+      }
+    },
+    {
+      "description": "a request for an alligator's sister",
+      "provider_state": "there is an alligator named Mary",
+      "request": {
+        "method": "get",
+        "path": "/alligators/Mary/sister",
+        "headers": {
+          "Accept": "application/json"
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json;charset=utf-8"
+        },
+        "body": {
+          "name": "Sue"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecificationVersion": "1.0.0"
+  },
+  "updatedAt": "2015-01-19T22:15:10+00:00",
+  "createdAt": "2015-01-19T22:13:57+00:00",
+  "_links": {
+    "self": {
+      "title": "Pact",
+      "name": "Pact between Zoo App (v1.0.1) and Animal Service",
+      "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.1"
+    },
+    "pb:consumer": {
+      "title": "Consumer",
+      "name": "Zoo App",
+      "href": "http://localhost:8089/pacticipants/Zoo%20App"
+    },
+    "pb:provider": {
+      "title": "Provider",
+      "name": "Animal Service",
+      "href": "http://localhost:8089/pacticipants/Animal%20Service"
+    },
+    "pb:latest-pact-version": {
+      "title": "Pact",
+      "name": "Latest version of this pact",
+      "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest"
+    },
+    "pb:previous-distinct": {
+      "title": "Pact",
+      "name": "Previous distinct version of this pact",
+      "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.1/previous-distinct"
+    },
+    "pb:diff-previous-distinct": {
+      "title": "Diff",
+      "name": "Diff with previous distinct version of this pact",
+      "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.1/diff/previous-distinct"
+    },
+    "pb:pact-webhooks": {
+      "title": "Webhooks for the pact between Zoo App and Animal Service",
+      "href": "http://localhost:8089/webhooks/provider/Animal%20Service/consumer/Zoo%20App"
+    },
+    "pb:tag-prod-version": {
+      "title": "Tag this version as 'production'",
+      "href": "http://localhost:8089/pacticipants/Zoo%20App/versions/1.0.1/tags/prod"
+    },
+    "pb:tag-version": {
+      "title": "Tag version",
+      "href": "http://localhost:8089/pacticipants/Zoo%20App/versions/1.0.1/tags/{tag}"
+    },
+    "curies": [
+      {
+        "name": "pb",
+        "href": "http://localhost:8089/doc/{rel}",
+        "templated": true
+      }
+    ]
+  }
+}

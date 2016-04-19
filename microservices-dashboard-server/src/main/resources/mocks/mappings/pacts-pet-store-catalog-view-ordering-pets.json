@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/version/1.0.0"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "pacts-pet-store-catalog-view-ordering-pets.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

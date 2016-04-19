@@ -1,0 +1,104 @@
+{
+  "pacts": [
+    {
+      "updatedAt": "2015-01-19T22:15:10+00:00",
+      "createdAt": "2015-01-19T22:13:57+00:00",
+      "_embedded": {
+        "consumer": {
+          "name": "Zoo App",
+          "_embedded": {
+            "version": {
+              "number": "1.0.1",
+              "_links": {
+                "self": {
+                  "href": "http://localhost:8089/pacticipants/Zoo%20App/versions/1.0.1"
+                }
+              }
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://localhost:8089/pacticipants/Zoo%20App"
+            }
+          }
+        },
+        "provider": {
+          "name": "Animal Service",
+          "_links": {
+            "self": {
+              "href": "http://localhost:8089/pacticipants/Animal%20Service"
+            }
+          }
+        }
+      },
+      "_links": {
+        "self": [
+          {
+            "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest"
+          },
+          {
+            "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.1"
+          }
+        ]
+      }
+    },
+    {
+      "createdAt": "2016-01-20T13:42:00+00:00",
+      "_embedded": {
+        "consumer": {
+          "name": "pet-store-catalog-view",
+          "_embedded": {
+            "version": {
+              "number": "1.0.0",
+              "_links": {
+                "self": {
+                  "href": "http://localhost:8089/pacticipants/pet-store-catalog-view/versions/1.0.0"
+                }
+              }
+            }
+          },
+          "_links": {
+            "self": {
+              "href": "http://localhost:8089/pacticipants/pet-store-catalog-view"
+            }
+          }
+        },
+        "provider": {
+          "name": "ordering-pets",
+          "_links": {
+            "self": {
+              "href": "http://localhost:8089/pacticipants/ordering-pets"
+            }
+          }
+        }
+      },
+      "_links": {
+        "self": [
+          {
+            "href": "http://localhost:8089/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/latest"
+          },
+          {
+            "href": "http://localhost:8089/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/version/1.0.0"
+          }
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "http://localhost:8089/pacts/latest"
+    },
+    "pacts": [
+      {
+        "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest",
+        "name": "Latest pact between Zoo App and Animal Service",
+        "title": "Pact"
+      },
+      {
+        "href": "http://localhost:8089/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/latest",
+        "name": "Latest pact between pet-store-catalog-view and ordering-pets",
+        "title": "Pact"
+      }
+    ]
+  }
+}

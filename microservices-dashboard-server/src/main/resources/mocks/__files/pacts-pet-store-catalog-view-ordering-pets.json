@@ -1,0 +1,132 @@
+{
+  "metadata": {
+    "pactSpecificationVersion": "2.0.0"
+  },
+  "consumer": {
+    "name": "pet-store-catalog-view"
+  },
+  "provider": {
+    "name": "ordering-pets"
+  },
+  "interactions": [
+    {
+      "provider_state": "pets exist",
+      "description": "a request for pets",
+      "request": {
+        "method": "get",
+        "path": "/ordering-pets/pets",
+        "query": "",
+        "headers": {
+          "accept": "application/vnd.ord.pets.v1+json;charset=UTF-8",
+          "x-application-state": "{\"userId\": 12345}"
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "pets": [
+            {
+              "name": "Lasie",
+              "species": "dog",
+              "age": 5,
+              "price": 560
+            },
+            {
+              "name": "Garfield",
+              "species": "cat",
+              "age": 2,
+              "price": 58
+            },
+            {
+              "name": "Nemo",
+              "species": "fish",
+              "age": 0,
+              "price": 10
+            },
+            {
+              "name": "Billie",
+              "species": "hamster",
+              "age": 1,
+              "price": 15
+            }
+          ]
+        },
+        "headers": {}
+      }
+    },
+    {
+      "provider_state": "pets don't exist",
+      "description": "a request for pets",
+      "request": {
+        "method": "get",
+        "path": "/ordering-pets/pets",
+        "query": "",
+        "headers": {
+          "accept": "application/vnd.ord.pets.v1+json;charset=UTF-8",
+          "x-application-state": "{\"userId\": 12345}"
+        }
+      },
+      "response": {
+        "status": 200,
+        "body": {
+          "pets": []
+        },
+        "headers": {}
+      }
+    }
+  ],
+  "pactFileName": "c:\\Users\\me\\Documents\\workspace\\pet-store\\gulp/../tmp/pact/pacts-pet-store-catalog-view-ordering-pets.json",
+  "updatedAt": "2016-04-05T12:33:44+00:00",
+  "createdAt": "2016-03-21T18:09:31+00:00",
+  "_links": {
+    "self": {
+      "title": "Pact",
+      "name": "Pact between pet-store-catalog-view (v1.0.0) and ordering-pets",
+      "href": "http://localhost:8089/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/version/1.0.0"
+    },
+    "pb:consumer": {
+      "title": "Consumer",
+      "name": "pet-store-catalog-view",
+      "href": "http://localhost:8089/pacticipants/pet-store-catalog-view"
+    },
+    "pb:provider": {
+      "title": "Provider",
+      "name": "ordering-pets",
+      "href": "http://localhost:8089/pacticipants/ordering-pets"
+    },
+    "pb:latest-pact-version": {
+      "title": "Pact",
+      "name": "Latest version of this pact",
+      "href": "http://localhost:8089/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/latest"
+    },
+    "pb:previous-distinct": {
+      "title": "Pact",
+      "name": "Previous distinct version of this pact",
+      "href": "http://localhost:8089/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/version/1.0.0/previous-distinct"
+    },
+    "pb:diff-previous-distinct": {
+      "title": "Diff",
+      "name": "Diff with previous distinct version of this pact",
+      "href": "http://localhost:8089/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/version/1.0.0/diff/previous-distinct"
+    },
+    "pb:pact-webhooks": {
+      "title": "Webhooks for the pact between pet-store-catalog-view and ordering-pets",
+      "href": "http://localhost:8089/webhooks/provider/ordering-pets/consumer/pet-store-catalog-view"
+    },
+    "pb:tag-prod-version": {
+      "title": "Tag this version as 'production'",
+      "href": "http://localhost:8089/pacticipants/pet-store-catalog-view/versions/1.0.0/tags/prod"
+    },
+    "pb:tag-version": {
+      "title": "Tag version",
+      "href": "http://localhost:8089/pacticipants/pet-store-catalog-view/versions/1.0.0/tags/{tag}"
+    },
+    "curies": [
+      {
+        "name": "pb",
+        "href": "http://localhost:8089/doc/{rel}",
+        "templated": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.1"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "pacts-animal-zoo.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

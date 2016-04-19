@@ -1,0 +1,13 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/pacts/latest"
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "pacts-latest.json",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
