@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ObjectToJsonConverterTest {
 
     @Test
-    public void testJsonToObject() {
+    public void shouldReturnJSON() {
         Node node = NodeBuilder.node()
                                .withId("key1")
                                .withDetail("type", Constants.MICROSERVICE)
@@ -32,7 +32,7 @@ public class ObjectToJsonConverterTest {
     }
 
     @Test
-    public void testNullObject() {
+    public void shouldReturnNull() {
         ObjectToJsonConverter<Node> converter = new ObjectToJsonConverter<>();
 
         String nodeAsJson = converter.convert(null);

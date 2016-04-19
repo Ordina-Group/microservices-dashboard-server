@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JsonToObjectConverterTest {
 
     @Test
-    public void testJsonToObject() {
+    public void shouldReturnNode() {
         String nodeAsJson = "{\"id\":\"key1\",\"details\":{\"type\":\"MICROSERVICE\",\"status\":\"UP\"},\"linkedNodes\":[{\"id\":\"1a\",\"details\":{\"type\":\"REST\",\"status\":\"DOWN\"}}]}";
         JsonToObjectConverter<Node> converter = new JsonToObjectConverter<>(Node.class);
 
@@ -33,7 +33,7 @@ public class JsonToObjectConverterTest {
     }
 
     @Test
-    public void testEmptyString() {
+    public void emptyStringShouldReturnNull() {
         String nodeAsJson = "";
         JsonToObjectConverter<Node> converter = new JsonToObjectConverter<>(Node.class);
 
@@ -43,7 +43,7 @@ public class JsonToObjectConverterTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testMalformedJson() {
+    public void malformedJsonShouldThrowAnIllegalArgumentException() {
         String nodeAsJson = "{\"id\":\"key1\",}";
         JsonToObjectConverter<Node> converter = new JsonToObjectConverter<>(Node.class);
 

@@ -24,7 +24,7 @@ public class CachingConfigTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testCacheManager() {
+    public void shouldReturnARedisCacheManager() {
         RedisTemplate<String, Node> redisTemplate = mock(RedisTemplate.class);
 
         when(cachingProperties.getDefaultExpiration()).thenReturn(30L);
@@ -36,7 +36,7 @@ public class CachingConfigTest {
     }
 
     @Test
-    public void testCacheCleaningBeanNonEvict() {
+    public void shouldNotEvictCache() {
         RedisService redisService = mock(RedisService.class);
 
         when(cachingProperties.isEvict()).thenReturn(false);
@@ -50,7 +50,7 @@ public class CachingConfigTest {
     }
 
     @Test
-    public void testCacheCleaningBeanEvict() {
+    public void shouldEvictCache() {
         RedisService redisService = mock(RedisService.class);
 
         when(cachingProperties.isEvict()).thenReturn(true);
