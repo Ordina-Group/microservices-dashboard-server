@@ -13,6 +13,8 @@ import be.ordina.msdashboard.aggregator.pact.PactsAggregator;
 import be.ordina.msdashboard.constants.Constants;
 import be.ordina.msdashboard.model.Node;
 import be.ordina.msdashboard.services.RedisService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,8 @@ import com.google.common.annotations.VisibleForTesting;
 
 @Component
 public class DependenciesGraphResourceJsonBuilder {
+
+	private static final Logger LOG = LoggerFactory.getLogger(DependenciesGraphResourceJsonBuilder.class);
 
 	private static final String DIRECTED = "directed";
 	private static final String MULTIGRAPH = "multigraph";
@@ -106,7 +110,11 @@ public class DependenciesGraphResourceJsonBuilder {
 			String linkedMicroservice = resource.getLinkedNodes().get(0).getId();
 			int resourceNodeId = nodes.size() - 1;
 			int linkedMicroserviceNodeId = findNode(linkedMicroservice, nodes);
-			links.add(createLink(resourceNodeId, linkedMicroserviceNodeId));
+			if (linkedMicroserviceNodeId != -1) {
+				links.add(createLink(resourceNodeId, linkedMicroserviceNodeId));
+			} else {
+				LOG.warn("Unable to resolve a link from {} to {} (destination not found)", resource.getId(), linkedMicroservice);
+			}
 		}
 		for (Node uiComponent : uiComponents) {
 			Map<String, Object> uiComponentNode = createUiComponentNode(uiComponent);
@@ -116,7 +124,11 @@ public class DependenciesGraphResourceJsonBuilder {
 					.map(linkedResource -> linkedResource.getId())
 					.forEach(linkedResourceId -> {
 						int linkedResourceNodeId = findNode(linkedResourceId, nodes);
-						links.add(createLink(uiComponentNodeId, linkedResourceNodeId));
+						if (linkedResourceNodeId != -1) {
+							links.add(createLink(uiComponentNodeId, linkedResourceNodeId));
+						} else {
+							LOG.warn("Unable to resolve a link from {} to {} (destination not found)", uiComponent.getId(), linkedResourceId);
+						}
 					});
 		}
 		graph.put(NODES, nodes);
