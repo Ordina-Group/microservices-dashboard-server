@@ -9,7 +9,7 @@ import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
 
-import be.ordina.msdashboard.aggregator.AbstractAggregator;
+import be.ordina.msdashboard.aggregator.EurekaBasedAggregator;
 import be.ordina.msdashboard.constants.Constants;
 import be.ordina.msdashboard.model.Node;
 import be.ordina.msdashboard.model.NodeBuilder;
@@ -22,7 +22,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-public class HealthIndicatorsAggregator extends AbstractAggregator<Node> {
+public class HealthIndicatorsAggregator extends EurekaBasedAggregator<Node> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(HealthIndicatorsAggregator.class);
 

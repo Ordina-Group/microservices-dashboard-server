@@ -18,9 +18,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-public abstract class AbstractAggregator<T> {
+public abstract class EurekaBasedAggregator<T> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractAggregator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EurekaBasedAggregator.class);
 	private static final String ZUUL_ID = "zuul";
 	private static final int CORE_POOL_SIZE = 30;
 	private static final int MAX_POOL_SIZE = 50;
@@ -29,7 +29,7 @@ public abstract class AbstractAggregator<T> {
 	private DiscoveryClient discoveryClient;
 	private TaskExecutor taskExecutor;
 
-	public AbstractAggregator() {
+	public EurekaBasedAggregator() {
 		taskExecutor = createTaskExecutor();
 	}
 

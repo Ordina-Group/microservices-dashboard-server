@@ -1,6 +1,7 @@
-package be.ordina.msdashboard.aggregator.index;
+package be.ordina.msdashboard.aggregator.pact;
 
 import be.ordina.msdashboard.aggregator.EurekaBasedAggregator;
+import be.ordina.msdashboard.aggregator.index.SingleServiceIndexCollectorTask;
 import be.ordina.msdashboard.constants.Constants;
 import be.ordina.msdashboard.model.Node;
 import be.ordina.msdashboard.model.NodeBuilder;
@@ -14,9 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.*;
 
 @Component
-public class IndexesAggregator extends EurekaBasedAggregator<Node> {
+public class PactsAggregator extends EurekaBasedAggregator<Node> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(IndexesAggregator.class);
+	private static final Logger LOG = LoggerFactory.getLogger(PactsAggregator.class);
 
 	private static final long TIMEOUT = 17000L;
 
