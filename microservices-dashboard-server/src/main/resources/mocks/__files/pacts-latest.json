@@ -34,7 +34,7 @@
       "_links": {
         "self": [
           {
-            "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest"
+            "href": "http://localhost:8089/pacts/provider/Animal-Service/consumer/Zoo-App/latest"
           },
           {
             "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.1"
@@ -90,7 +90,7 @@
     },
     "pacts": [
       {
-        "href": "http://localhost:8089/pacts/provider/Animal%20Service/consumer/Zoo%20App/latest",
+        "href": "http://localhost:8089/pacts/provider/Animal-Service/consumer/Zoo-App/latest",
         "name": "Latest pact between Zoo App and Animal Service",
         "title": "Pact"
       },

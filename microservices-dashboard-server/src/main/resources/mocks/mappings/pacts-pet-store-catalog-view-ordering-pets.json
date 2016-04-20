@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/version/1.0.0"
+    "url": "/pacts/provider/ordering-pets/consumer/pet-store-catalog-view/latest"
   },
   "response": {
     "status": 200,

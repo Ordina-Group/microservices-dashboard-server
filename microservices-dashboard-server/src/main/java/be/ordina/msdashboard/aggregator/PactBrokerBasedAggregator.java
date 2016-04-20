@@ -1,12 +1,10 @@
 package be.ordina.msdashboard.aggregator;
 
-import be.ordina.msdashboard.model.Service;
 import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -55,11 +53,11 @@ public abstract class PactBrokerBasedAggregator<T> {
 
 	public List<FutureTask<T>> getFutureTasks() {
 		LOG.debug("Starting collecting remote info");
-		List<String> pacts = getPactUrlsFromOnlineServices();
+		List<String> pacts = getPactUrlsFromBroker();
 		return launchSinglePactCollectorTasks(pacts);
 	}
 
-	private List<String> getPactUrlsFromOnlineServices() {
+	private List<String> getPactUrlsFromBroker() {
 		String latestPacts = null;
 		try {
 			latestPacts = restTemplate.getForObject(new URI(pactBrokerUrl + latestPactsUrl), String.class);

@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/pacts/provider/Animal%20Service/consumer/Zoo%20App/version/1.0.1"
+    "url": "/pacts/provider/Animal-Service/consumer/Zoo-App/latest"
   },
   "response": {
     "status": 200,
