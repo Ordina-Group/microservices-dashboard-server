@@ -16,4 +16,5 @@ public class Constants {
 	public static final String HYSTRIX = "hystrix";
 	public static final String HEALTH_CACHE_NAME = "healths";
 	public static final String INDEX_CACHE_NAME = "indexes";
+	public static final String PACTS_CACHE_NAME = "pacts";
 }

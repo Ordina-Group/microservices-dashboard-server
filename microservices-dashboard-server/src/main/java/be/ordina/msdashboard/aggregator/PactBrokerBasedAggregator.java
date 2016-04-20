@@ -1,10 +1,11 @@
 package be.ordina.msdashboard.aggregator;
 
 import be.ordina.msdashboard.model.Service;
-import com.netflix.discovery.converters.Auto;
+import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.core.task.TaskExecutor;
@@ -14,6 +15,8 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -26,11 +29,17 @@ public abstract class PactBrokerBasedAggregator<T> {
 	private static final int CORE_POOL_SIZE = 30;
 	private static final int MAX_POOL_SIZE = 50;
 
+	@Value("${pact-broker.url}")
+	private String pactBrokerUrl;
+	@Value("${pact-broker.latest-url}")
+	private String latestPactsUrl;
+	@Value("${pact-broker.self-href-jsonPath}")
+	private String selfHrefJsonPath;
 	@Autowired
 	private DiscoveryClient discoveryClient;
 	private TaskExecutor taskExecutor;
-	@Autowired
-	private RestTemplate restTemplate;
+
+	private RestTemplate restTemplate = new RestTemplate();
 
 	public PactBrokerBasedAggregator() {
 		taskExecutor = createTaskExecutor();
@@ -46,25 +55,25 @@ public abstract class PactBrokerBasedAggregator<T> {
 
 	public List<FutureTask<T>> getFutureTasks() {
 		LOG.debug("Starting collecting remote info");
-		List<String> serviceIds = getIdsFromOnlineServices();
-		return launchSingleServiceRootLinksCollectorTasks(serviceIds);
+		List<String> pacts = getPactUrlsFromOnlineServices();
+		return launchSinglePactCollectorTasks(pacts);
 	}
 
-	private List<String> getIdsFromOnlineServices() {
-		//restTemplate.getForObject("/pacts/latest" > pacts > _links > href > 0);
-		//serviceIds.remove(ZUUL_ID);
-		return null;
+	private List<String> getPactUrlsFromOnlineServices() {
+		String latestPacts = null;
+		try {
+			latestPacts = restTemplate.getForObject(new URI(pactBrokerUrl + latestPactsUrl), String.class);
+		} catch (URISyntaxException e) {
+			throw new IllegalStateException("Bad Pact broker URI", e);
+		}
+		return JsonPath.read(latestPacts, selfHrefJsonPath);
 	}
 
-	private List<FutureTask<T>> launchSingleServiceRootLinksCollectorTasks(final List<String> serviceIds) {
+	private List<FutureTask<T>> launchSinglePactCollectorTasks(final List<String> pactUrls) {
 		List<FutureTask<T>> tasks = new ArrayList<FutureTask<T>>();
 		HttpServletRequest originRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		for (String serviceId : serviceIds) {
-			List<ServiceInstance> serviceInstances = discoveryClient.getInstances(serviceId);
-			ServiceInstance serviceInstance = serviceInstances.get(0);
-			int servicePort = serviceInstance.getPort();
-			String serviceHost = serviceInstance.getHost();
-			FutureTask<T> task = new IdentifiableFutureTask(instantiateAggregatorTask(originRequest, new Service(serviceId, serviceHost, servicePort)), serviceId);
+		for (String pactUrl : pactUrls) {
+			FutureTask<T> task = new IdentifiableFutureTask(instantiateAggregatorTask(pactUrl), pactUrl);
 			tasks.add(task);
 			taskExecutor.execute(task);
 		}
@@ -72,7 +81,7 @@ public abstract class PactBrokerBasedAggregator<T> {
 		return tasks;
 	}
 
-	protected abstract Callable<T> instantiateAggregatorTask(final HttpServletRequest originRequest, final Service service);
+	protected abstract Callable<T> instantiateAggregatorTask(final String pactUrl);
 
 	protected class IdentifiableFutureTask extends FutureTask<T> {
 

@@ -45,3 +45,4 @@ eureka:
 pact-broker:
   url: http://localhost:8089
   latest-url: /pacts/latest
+  self-href-jsonPath: $.pacts[*]._links.self[0].href

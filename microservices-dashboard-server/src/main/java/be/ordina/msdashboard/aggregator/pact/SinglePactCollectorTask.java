@@ -18,34 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-public class SingleServicePactCollectorTask implements Callable<Node> {
+public class SinglePactCollectorTask implements Callable<Node> {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SingleServicePactCollectorTask.class);
-	private final String uriString;
-	private final static String GATEWAY = "";
-	private final static String HEALTH = "health";
-	private final Service service;
-	private IndexToNodeConverter indexToNodeConverter;
-	private DependenciesListFilterPredicate dependenciesListFilterPredicate;
-	private ToolBoxDependenciesModifier toolBoxDependenciesModifier;
+	private static final Logger LOG = LoggerFactory.getLogger(SinglePactCollectorTask.class);
+	private final String pactUrl;
+	private PactToNodeConverter pactToNodeConverter;
 
-	public SingleServicePactCollectorTask(final Service service, final HttpServletRequest originRequest) {
-		this.service = service;
-		uriString = buildHealthUri(service);
-		indexToNodeConverter = new IndexToNodeConverter();
-		dependenciesListFilterPredicate = new DependenciesListFilterPredicate();
-		toolBoxDependenciesModifier = new ToolBoxDependenciesModifier();
-	}
-
-	private String buildHealthUri(final Service service) {
-		Assert.notNull(service.getId());
-		StringBuilder builder = new StringBuilder("http://");
-		builder.append(service.getHost())
-				.append(":")
-				.append(service.getPort())
-				.append("/")
-				.append(service.getId());
-		return builder.toString();
+	public SinglePactCollectorTask(final String pactUrl) {
+		this.pactUrl = pactUrl;
+		pactToNodeConverter = new PactToNodeConverter();
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -57,13 +38,13 @@ public class SingleServicePactCollectorTask implements Callable<Node> {
 		}
 		RestTemplate restTemplate = getRestTemplate();
 
-		LOG.debug("Calling URI: {}", uriString);
+		LOG.debug("Calling URI: {}", pactUrl);
 
-		Map<String, Object> responseRest = restTemplate.getForObject(uriString, Map.class);
-		Node node = indexToNodeConverter.convert(responseRest, service);
+		String pact = restTemplate.getForObject(pactUrl, String.class);
+		Node node = pactToNodeConverter.convert(pact, pactUrl);
 		if (LOG.isDebugEnabled()) {
 			long totalTime = new DateTime().getMillis() - startTime;
-			LOG.debug("URI: {} Total time: {}", uriString, totalTime);
+			LOG.debug("URI: {} Total time: {}", pactUrl, totalTime);
 		}
 		return node;
 	}
