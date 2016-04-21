@@ -14,7 +14,7 @@
       "description": "a request for pets",
       "request": {
         "method": "get",
-        "path": "/ordering-pets/pets",
+        "path": "rel://pet:pets",
         "query": "",
         "headers": {
           "accept": "application/vnd.ord.pets.v1+json;charset=UTF-8",
@@ -55,11 +55,11 @@
       }
     },
     {
-      "provider_state": "pets don't exist",
-      "description": "a request for pets",
+      "provider_state": "pet domains don't exist",
+      "description": "a request for pet domains",
       "request": {
         "method": "get",
-        "path": "/ordering-pets/pets",
+        "path": "/rel://pet:domain",
         "query": "",
         "headers": {
           "accept": "application/vnd.ord.pets.v1+json;charset=UTF-8",
