@@ -5,6 +5,7 @@ spring:
     config:
       uri: http://localhost:8888/
       failFast: false
+
 info:
   app:
     version: ${project.version}

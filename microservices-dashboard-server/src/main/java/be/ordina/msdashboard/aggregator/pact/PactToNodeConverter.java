@@ -15,8 +15,6 @@ import java.util.Map;
 public class PactToNodeConverter {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PactToNodeConverter.class);
-	private static final String HREF = "href";
-	private static final String CURIE_NAME = "name";
 	private static final String UI_COMPONENT = "UI_COMPONENT";
 	private static final String UP = "UP";
 
@@ -29,6 +27,7 @@ public class PactToNodeConverter {
 
 		NodeBuilder node = new NodeBuilder();
 		node.withId(consumer);
+		node.withLane(0);
 		rels.stream().forEach(rel -> {
 				Node linkNode = NodeBuilder.node().withId(rel).build();
 				node.withLinkedNode(linkNode);
@@ -39,7 +38,6 @@ public class PactToNodeConverter {
 		details.put("type", UI_COMPONENT);
 		details.put("status", UP);
 		node.havingDetails(details);
-		node.withLane(0);
 
 		return node.build();
 	}

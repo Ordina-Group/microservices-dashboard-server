@@ -36,7 +36,7 @@ public class PactsAggregator extends PactBrokerBasedAggregator<Node> {
 				LOG.debug("Problem getting results for task: {} caused by: {}", key, e.toString());
 			}
 		}
-		LOG.debug("Finished fetching combined indexes");
+		LOG.debug("Finished fetching pacts");
 		return uiNode.build();
 	}
 
