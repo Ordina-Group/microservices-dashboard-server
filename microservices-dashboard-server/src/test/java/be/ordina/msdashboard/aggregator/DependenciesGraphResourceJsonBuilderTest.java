@@ -19,6 +19,7 @@ import java.util.Map;
 
 import be.ordina.msdashboard.aggregator.health.HealthIndicatorsAggregator;
 import be.ordina.msdashboard.aggregator.index.IndexesAggregator;
+import be.ordina.msdashboard.aggregator.pact.PactsAggregator;
 import be.ordina.msdashboard.model.NodeBuilder;
 import be.ordina.msdashboard.services.RedisService;
 import org.apache.commons.collections.CollectionUtils;
@@ -50,6 +51,9 @@ public class DependenciesGraphResourceJsonBuilderTest {
 
 	@Mock
 	private RedisService redisService;
+
+	@Mock
+	private PactsAggregator pactsAggregator;
 
 	@Mock
 	private VirtualAndRealDependencyIntegrator virtualAndRealDependencyIntegrator;
@@ -86,6 +90,7 @@ public class DependenciesGraphResourceJsonBuilderTest {
 		doReturn(dependencies.getLinkedNodes()).when(virtualAndRealDependencyIntegrator).integrateVirtualNodesWithReal(anyListOf(Node.class), anyListOf(Node.class), anyListOf(Node.class));
 		doReturn(dependencies).when(healthIndicatorsAggregator).fetchCombinedDependencies();
 		doReturn(new Node()).when(indexesAggregator).fetchIndexes();
+		doReturn(new Node()).when(pactsAggregator).fetchUIComponents();
 
 
 		Map<String, Object> returnedMap = dependenciesGraphResourceJsonBuilder.build();
