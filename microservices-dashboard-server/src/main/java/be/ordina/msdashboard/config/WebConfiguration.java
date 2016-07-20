@@ -22,7 +22,8 @@ import be.ordina.msdashboard.aggregators.VirtualAndRealDependencyIntegrator;
 import be.ordina.msdashboard.aggregators.health.HealthIndicatorsAggregator;
 import be.ordina.msdashboard.aggregators.health.HealthProperties;
 import be.ordina.msdashboard.aggregators.index.IndexProperties;
-import be.ordina.msdashboard.aggregators.index.IndexToNodeConverter;
+import be.ordina.msdashboard.aggregators.index.IndexToNodeConverterActuatorMappingsImpl;
+import be.ordina.msdashboard.aggregators.index.IndexToNodeConverterHateoasImpl;
 import be.ordina.msdashboard.aggregators.index.IndexesAggregator;
 import be.ordina.msdashboard.aggregators.pact.PactProperties;
 import be.ordina.msdashboard.aggregators.pact.PactsAggregator;
@@ -34,6 +35,7 @@ import be.ordina.msdashboard.graph.GraphRetriever;
 import be.ordina.msdashboard.properties.Labels;
 import be.ordina.msdashboard.stores.NodeStore;
 import be.ordina.msdashboard.stores.SimpleStore;
+import be.ordina.msdashboard.uriresolvers.ActuatorUriResolver;
 import be.ordina.msdashboard.uriresolvers.DefaultUriResolver;
 import be.ordina.msdashboard.uriresolvers.EurekaUriResolver;
 import be.ordina.msdashboard.uriresolvers.UriResolver;
@@ -128,10 +130,19 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
         @Autowired
         private NettyServiceCaller caller;
 
+//        @Bean
+//        @ConditionalOnMissingBean
+//        public IndexesAggregator indexesAggregator(ApplicationEventPublisher publisher) {
+//            return new IndexesAggregator(new IndexToNodeConverterHateoasImpl(), discoveryClient,
+//                    new EurekaUriResolver(),
+//                    indexProperties(), publisher, caller);
+//        }
+
         @Bean
         @ConditionalOnMissingBean
-        public IndexesAggregator indexesAggregator(ApplicationEventPublisher publisher) {
-            return new IndexesAggregator(new IndexToNodeConverter(), discoveryClient, uriResolver(), indexProperties(), publisher, caller);
+        public IndexesAggregator indexesAggregatorUrlMappings(ApplicationEventPublisher publisher) {
+            return new IndexesAggregator(new IndexToNodeConverterActuatorMappingsImpl(),
+                    discoveryClient, new ActuatorUriResolver(), indexProperties(), publisher, caller);
         }
 
         @ConfigurationProperties("msdashboard.index")

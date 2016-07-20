@@ -62,7 +62,7 @@ public class IndexesAggregatorTest {
     @Before
     public void setUp() {
         discoveryClient = mock(DiscoveryClient.class);
-        indexToNodeConverter = mock(IndexToNodeConverter.class);
+        indexToNodeConverter = mock(IndexToNodeConverterHateoasImpl.class);
         indexProperties = mock(IndexProperties.class);
         caller = mock(NettyServiceCaller.class);
         publisher = mock(ApplicationEventPublisher.class);
