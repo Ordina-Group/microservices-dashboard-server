@@ -38,7 +38,7 @@ public class IndexToNodeConverterTest {
 
     @Before
     public void setUp() {
-        indexToNodeConverter = new IndexToNodeConverter();
+        indexToNodeConverter = new IndexToNodeConverterHateoasImpl();
     }
 
     @Test

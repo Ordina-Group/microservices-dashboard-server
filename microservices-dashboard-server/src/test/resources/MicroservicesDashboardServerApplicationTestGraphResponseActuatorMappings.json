@@ -1,0 +1,228 @@
+{
+  "directed": true,
+  "types": [
+    "DB",
+    "MICROSERVICE",
+    "REST",
+    "SOAP",
+    "JMS",
+    "RESOURCE"
+  ],
+  "nodes": [
+    {
+      "details": {
+        "discoveryClient": {
+          "description": "Spring Cloud Eureka Discovery Client",
+          "status": "UP",
+          "services": [
+            "service1",
+            "service2",
+            "service3",
+            "service4"
+          ]
+        },
+        "eureka": {
+          "description": "Remote status from Eureka server",
+          "status": "UP",
+          "applications": {
+            "SERVICE1": 1,
+            "SERVICE2": 1,
+            "SERVICE3": 1,
+            "SERVICE4": 1
+          }
+        },
+        "description": "Spring Cloud Eureka Discovery Client",
+        "status": "UP"
+      },
+      "id": "discoveryComposite",
+      "lane": 3
+    },
+    {
+      "details": {
+        "type": "MICROSERVICE",
+        "status": "UP"
+      },
+      "id": "service1",
+      "lane": 2
+    },
+    {
+      "details": {
+        "database": "Oracle",
+        "hello": "Hello",
+        "type": "DB",
+        "status": "UP",
+        "group": "ADDR"
+      },
+      "id": "backend2",
+      "lane": 3
+    },
+    {
+      "details": {
+        "type": "SOAP",
+        "version": "1.0.0",
+        "status": "UP",
+        "group": "ADDR"
+      },
+      "id": "backend1",
+      "lane": 3
+    },
+    {
+      "details": {
+        "type": "SOAP",
+        "status": "UNKNOWN",
+        "group": "TEST"
+      },
+      "id": "backend4",
+      "lane": 3
+    },
+    {
+      "details": {
+        "type": "MICROSERVICE",
+        "status": "DOWN"
+      },
+      "id": "service3",
+      "lane": 2
+    },
+    {
+      "details": {
+        "error": "be.ordina.BackendNotAvailableException: TIMEOUT",
+        "status": "DOWN"
+      },
+      "id": "backend3",
+      "lane": 3
+    },
+    {
+      "details": {
+        "type": "REST",
+        "status": "UNKNOWN",
+        "group": "ADDR"
+      },
+      "id": "backend10",
+      "lane": 3
+    },
+    {
+      "details": {
+        "minversion": "2.1.3",
+        "type": "MICROSERVICE",
+        "version": "3.0.1",
+        "status": "UP",
+        "group": "FUNCTIONAL"
+      },
+      "id": "loyalty-program",
+      "lane": 2
+    },
+    {
+      "details": {
+        "type": "REST",
+        "status": "UNKNOWN",
+        "group": "TEST"
+      },
+      "id": "backend9",
+      "lane": 3
+    },
+    {
+      "details": {
+        "type": "MICROSERVICE",
+        "status": "UP"
+      },
+      "id": "service4",
+      "lane": 2
+    },
+    {
+      "details": {
+        "backend6": {
+          "status": "UP",
+          "database": "HSQLDB",
+          "hello": 1
+        },
+        "backend7": {
+          "status": "UP",
+          "database": "Oracle",
+          "hello": 1
+        },
+        "backend5": {
+          "status": "UP",
+          "database": "Microsoft SQL Server",
+          "hello": "Hello"
+        },
+        "status": "UP"
+      },
+      "id": "db",
+      "lane": 3
+    }
+  ],
+  "lanes": [
+    {
+      "type": "UI Components",
+      "lane": 0
+    },
+    {
+      "type": "Resources",
+      "lane": 1
+    },
+    {
+      "type": "Microservices",
+      "lane": 2
+    },
+    {
+      "type": "Backends",
+      "lane": 3
+    }
+  ],
+  "links": [
+    {
+      "source": 5,
+      "target": 0
+    },
+    {
+      "source": 1,
+      "target": 3
+    },
+    {
+      "source": 1,
+      "target": 2
+    },
+    {
+      "source": 10,
+      "target": 8
+    },
+    {
+      "source": 1,
+      "target": 0
+    },
+    {
+      "source": 10,
+      "target": 11
+    },
+    {
+      "source": 10,
+      "target": 9
+    },
+    {
+      "source": 10,
+      "target": 4
+    },
+    {
+      "source": 10,
+      "target": 7
+    },
+    {
+      "source": 10,
+      "target": 0
+    },
+    {
+      "source": 5,
+      "target": 6
+    },
+    {
+      "source": 5,
+      "target": 4
+    },
+    {
+      "source": 5,
+      "target": 3
+    }
+  ],
+  "multigraph": false,
+  "graph": [ ]
+}
