@@ -59,7 +59,7 @@ public class NettyServiceCaller {
     public Observable<Map<String, Object>> retrieveJsonFromRequest(String serviceId, HttpClientRequest<ByteBuf> request) {
         return RxNetty.createHttpRequest(request)
                 .publish().autoConnect()
-                .doOnError(el -> errorHandler.handleNodeError(serviceId, format("Error retrieving node(s) for url {1} with headers {2}: {3}",
+                .doOnError(el -> errorHandler.handleNodeError(serviceId, format("Error retrieving node(s) for url {0} with headers {1}: {2}",
                         request.getUri(), request.getHeaders().entries(), el), el))
                 .filter(r -> {
                     if (r.getStatus().code() < 400) {
