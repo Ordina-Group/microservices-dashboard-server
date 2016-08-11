@@ -4,4 +4,11 @@ be.ordina.msdashboard.cache.CacheProperties,\
   be.ordina.msdashboard.nodes.aggregators.health.HealthProperties,\
   be.ordina.msdashboard.nodes.aggregators.index.IndexProperties,\
   be.ordina.msdashboard.nodes.aggregators.mappings.MappingsProperties,\
-  be.ordina.msdashboard.nodes.aggregators.pact.PactProperties
+  be.ordina.msdashboard.nodes.aggregators.pact.PactProperties,\
+  be.ordina.msdashboard.config.IndexAggregatorConfiguration,\
+  be.ordina.msdashboard.config.HealthAggregatorConfiguration,\
+  be.ordina.msdashboard.config.WebConfiguration,\
+  be.ordina.msdashboard.config.RedisConfiguration,\
+  be.ordina.msdashboard.config.MappingsAggregatorConfiguration,\
+  be.ordina.msdashboard.config.PactAggregatorConfiguration,\
+  be.ordina.msdashboard.config.DiscoveryClientConfiguration

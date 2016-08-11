@@ -28,6 +28,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.cloud.client.discovery.noop.NoopDiscoveryClientAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -58,7 +59,7 @@ import static redis.embedded.util.OSDetector.getOS;
 @EnableConfigurationProperties
 @Conditional(RedisOrMockCondition.class)
 @AutoConfigureBefore(WebConfiguration.class)
-@AutoConfigureAfter(RedisAutoConfiguration.class)
+@AutoConfigureAfter({ RedisAutoConfiguration.class, NoopDiscoveryClientAutoConfiguration.class})
 @SuppressWarnings("SpringJavaAutowiringInspection")
 public class RedisConfiguration {
 

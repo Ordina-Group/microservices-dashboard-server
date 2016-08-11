@@ -28,7 +28,13 @@ public class MicroservicesDashboardServerImportSelector implements DeferredImpor
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
         return new String[] { WebConfiguration.class.getCanonicalName(),
-                RedisConfiguration.class.getCanonicalName() };
+                RedisConfiguration.class.getCanonicalName(),
+                DiscoveryClientConfiguration.class.getCanonicalName(),
+                HealthAggregatorConfiguration.class.getCanonicalName(),
+                IndexAggregatorConfiguration.class.getCanonicalName(),
+                MappingsAggregatorConfiguration.class.getCanonicalName(),
+                PactAggregatorConfiguration.class.getCanonicalName()
+        };
     }
 
 }

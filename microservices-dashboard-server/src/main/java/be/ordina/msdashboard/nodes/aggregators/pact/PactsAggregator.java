@@ -15,26 +15,23 @@
  */
 package be.ordina.msdashboard.nodes.aggregators.pact;
 
+import be.ordina.msdashboard.nodes.aggregators.NodeAggregator;
+import be.ordina.msdashboard.nodes.model.Node;
+import be.ordina.msdashboard.nodes.model.SystemEvent;
+import com.jayway.jsonpath.JsonPath;
 import io.netty.buffer.ByteBuf;
 import io.reactivex.netty.RxNetty;
 import io.reactivex.netty.protocol.http.client.HttpClientRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import rx.Observable;
 
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
-
-import rx.Observable;
-import be.ordina.msdashboard.nodes.aggregators.NodeAggregator;
-import be.ordina.msdashboard.nodes.model.Node;
-import be.ordina.msdashboard.nodes.model.SystemEvent;
-
-import com.jayway.jsonpath.JsonPath;
 
 /**
  * @author Andreas Evers
@@ -45,6 +42,7 @@ public class PactsAggregator implements NodeAggregator {
 
 	private final PactProperties properties;
 	private final ApplicationEventPublisher publisher;
+	private final PactToNodeConverter pactToNodeConverter;
 
 	@Value("${pact-broker.url:'http://localhost:8089'}")
 	protected String pactBrokerUrl;
@@ -54,9 +52,11 @@ public class PactsAggregator implements NodeAggregator {
 	@Value("${pact-broker.self-href-jsonPath:'$.pacts[*]._links.self[0].href'}")
 	protected String selfHrefJsonPath;
 
-	public PactsAggregator(final PactProperties properties, final ApplicationEventPublisher publisher) {
+	public PactsAggregator(final PactToNodeConverter pactToNodeConverter,
+			final PactProperties properties, final ApplicationEventPublisher publisher) {
 		this.properties = properties;
 		this.publisher = publisher;
+		this.pactToNodeConverter = pactToNodeConverter;
 	}
 
 	@Override
@@ -127,10 +127,7 @@ public class PactsAggregator implements NodeAggregator {
 				.flatMap(response -> response.getContent())
 				.map(data -> data.toString(Charset.defaultCharset()))
 				.onErrorReturn(Throwable::toString)
-				.map(response -> {
-					PactToNodeConverter pactToNodeConverter = new PactToNodeConverter();
-					return pactToNodeConverter.convert(response, url);
-				})
+				.map(response -> pactToNodeConverter.convert(response, url))
 				.filter(node -> !properties.getFilteredServices().contains(node.getId()))
 				.doOnNext(node -> logger.info("Pact node discovered in url: " + url));
 	}

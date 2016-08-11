@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -157,8 +157,8 @@ public class MicroservicesDashboardServerApplicationTest {
     }
 
     @Configuration
+    @EnableDiscoveryClient
     @EnableAutoConfiguration
-    @ComponentScan(basePackages = "be.ordina")
     @EnableMicroservicesDashboardServer
     public static class TestMicroservicesDashboardServerApplication {
 

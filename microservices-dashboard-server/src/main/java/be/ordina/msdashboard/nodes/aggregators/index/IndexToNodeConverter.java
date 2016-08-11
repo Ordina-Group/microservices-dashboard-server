@@ -44,6 +44,13 @@ public class IndexToNodeConverter {
 	private static final String RESOURCE = "RESOURCE";
 	private static final String UP = "UP";
 
+	// TODO: Use these properties in the aggregator
+	private IndexProperties indexProperties;
+
+	public IndexToNodeConverter(IndexProperties indexProperties) {
+		this.indexProperties = indexProperties;
+	}
+
 	public Observable<Node> convert(String serviceId, String serviceUri, String source) {
 		Observable<Node> observable;
 
