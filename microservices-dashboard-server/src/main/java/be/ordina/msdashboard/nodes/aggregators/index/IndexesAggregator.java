@@ -34,7 +34,6 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Tim Ysewyn
@@ -55,9 +54,12 @@ public class IndexesAggregator implements NodeAggregator {
 	private SecurityStrategyFactory securityStrategyFactory;
 
 	@Deprecated
-	public IndexesAggregator(final IndexToNodeConverter indexToNodeConverter, final DiscoveryClient discoveryClient,
-							 final UriResolver uriResolver, final IndexProperties properties,
-							 final ApplicationEventPublisher publisher, final NettyServiceCaller caller) {
+	public IndexesAggregator(final IndexToNodeConverter indexToNodeConverter,
+	                         final DiscoveryClient discoveryClient,
+							 final UriResolver uriResolver,
+							 final IndexProperties properties,
+							 final ApplicationEventPublisher publisher,
+							 final NettyServiceCaller caller) {
 		this.indexToNodeConverter = indexToNodeConverter;
 		this.discoveryClient = discoveryClient;
 		this.uriResolver = uriResolver;
@@ -66,10 +68,13 @@ public class IndexesAggregator implements NodeAggregator {
 		this.caller = caller;
 	}
 
-	public IndexesAggregator(final IndexToNodeConverter indexToNodeConverter, final DiscoveryClient discoveryClient,
-							 final UriResolver uriResolver, final IndexProperties properties,
-							 final ApplicationEventPublisher publisher, final NettyServiceCaller caller,
-									  final SecurityStrategyFactory securityStrategyFactory) {
+	public IndexesAggregator(final IndexToNodeConverter indexToNodeConverter,
+	                         final DiscoveryClient discoveryClient,
+	                         final UriResolver uriResolver,
+	                         final IndexProperties properties,
+	                         final ApplicationEventPublisher publisher,
+	                         final NettyServiceCaller caller,
+	                         final SecurityStrategyFactory securityStrategyFactory) {
 		this(indexToNodeConverter, discoveryClient, uriResolver, properties, publisher, caller);
 		this.securityStrategyFactory = securityStrategyFactory;
 	}
@@ -79,9 +84,9 @@ public class IndexesAggregator implements NodeAggregator {
 		final Object outboundSecurityObject = getOutboundSecurityObject();
 		return getServicesFromDiscoveryClient()
 				.flatMap(this::getFirstInstanceForService)
-				.flatMap((ServiceInstance serviceInstance) -> outboundSecurityObject != null ?
-						getIndexFromServiceInstance(serviceInstance, outboundSecurityObject) :
-						getIndexFromServiceInstance(serviceInstance)
+				.flatMap((ServiceInstance serviceInstance) -> outboundSecurityObject != null
+				                                              ? getIndexFromServiceInstance(serviceInstance, outboundSecurityObject)
+				                                              : getIndexFromServiceInstance(serviceInstance)
 				)
 				.doOnNext(el -> logger.debug("Emitting node with id '{}'", el.getId()))
 				.doOnError(e -> {
@@ -94,34 +99,31 @@ public class IndexesAggregator implements NodeAggregator {
 
 	private Observable<String> getServicesFromDiscoveryClient() {
 		logger.info("Discovering services");
-		return Observable.from(discoveryClient.getServices()).subscribeOn(Schedulers.io()).publish().autoConnect()
-				.map(String::toLowerCase)
-				.doOnNext(s -> logger.debug("Service discovered: " + s))
-				.doOnError(e -> {
-					String error = "Error retrieving services: " + e.getMessage();
-					logger.error(error);
-					publisher.publishEvent(new SystemEvent(error, e));
-				})
-				.retry();
+		return Observable.from(discoveryClient.getServices())
+		                 .subscribeOn(Schedulers.io())
+		                 .publish()
+		                 .autoConnect()
+		                 .map(String::toLowerCase)
+		                 .doOnNext(s -> logger.debug("Service discovered: {}", s))
+		                 .doOnError(e -> {
+			                 String error = "Error retrieving services: " + e.getMessage();
+			                 logger.error(error);
+			                 publisher.publishEvent(new SystemEvent(error, e));
+		                 })
+		                 .retry();
 	}
 
 	private Observable<ServiceInstance> getFirstInstanceForService(String serviceId) {
 		logger.debug("Getting first instance for service '{}'", serviceId);
 
 		List<ServiceInstance> instances = discoveryClient.getInstances(serviceId);
-
-		Observable<ServiceInstance> observableServiceInstance;
-
 		if (instances.isEmpty()) {
 			String warning = "No instances found for service '" + serviceId + "'";
 			logger.warn(warning);
 			publisher.publishEvent(new NodeEvent(serviceId, warning));
-			observableServiceInstance = Observable.empty();
-		} else {
-			observableServiceInstance = Observable.just(instances.get(0));
+			return Observable.empty();
 		}
-
-		return observableServiceInstance;
+		return Observable.just(instances.get(0));
 	}
 
 	@Deprecated
@@ -134,17 +136,15 @@ public class IndexesAggregator implements NodeAggregator {
 		final String serviceId = serviceInstance.getServiceId().toLowerCase();
 		HttpClientRequest<ByteBuf> request = HttpClientRequest.createGet(url);
 		applyOutboundSecurityStrategyOnRequest(request, outboundSecurityObject);
-		for (Map.Entry<String, String> header : properties.getRequestHeaders().entrySet()) {
-			request.withHeader(header.getKey(), header.getValue());
-		}
-
+		properties.getRequestHeaders()
+		          .forEach(request::withHeader);
 		return caller.retrieveJsonFromRequest(serviceId, request)
 				.map(JSONObject::new)
 				.concatMap(source -> indexToNodeConverter.convert(serviceInstance.getServiceId().toLowerCase(), url, source))
 				.filter(node -> !properties.getFilteredServices().contains(node.getId()))
 				.doOnNext(el -> logger.info("Index node {} discovered in url: {}", el.getId(), url))
 				.doOnError(e -> logger.error("Error while fetching node: ", e))
-				.doOnCompleted(() -> logger.info("Completed emissions of an index node observable for url: " + url))
+				.doOnCompleted(() -> logger.info("Completed emissions of an index node observable for url: {}", url))
 				.onErrorResumeNext(Observable.empty());
 	}
 

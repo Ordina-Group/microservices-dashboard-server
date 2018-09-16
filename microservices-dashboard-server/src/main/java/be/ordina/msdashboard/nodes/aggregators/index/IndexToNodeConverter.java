@@ -24,10 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static org.apache.commons.lang.StringUtils.substringAfter;
 
 /**
  * @author Andreas Evers
@@ -52,89 +53,76 @@ public class IndexToNodeConverter {
 	}
 
 	public Observable<Node> convert(String serviceId, String serviceUri, String source) {
-		Observable<Node> observable;
-
 		try {
-			observable = convert(serviceId, serviceUri, new JSONObject(source));
+			return convert(serviceId, serviceUri, new JSONObject(source));
 		} catch (JSONException je) {
 			logger.error("Could not parse JSON: {}", je);
-			observable = Observable.empty();
+            return Observable.empty();
 		}
-		return observable;
 	}
 
-	public Observable<Node> convert(String serviceId, String serviceUri, JSONObject index) {
-		Observable<Node> observable;
-
-		if (index.has(LINKS)) {
-			observable = Observable.from(getNodesFromJSON(serviceId, serviceUri, index));
-		} else {
-			logger.error("Index deserialization fails because no HAL _links was found at the root");
-			observable = Observable.empty();
-		}
-
-		return observable;
-	}
+    public Observable<Node> convert(String serviceId, String serviceUri, JSONObject index) {
+        if (index.has(LINKS)) {
+            return Observable.from(getNodesFromJSON(serviceId, serviceUri, index));
+        } else {
+            logger.error("Index deserialization fails because no HAL _links was found at the root");
+            return Observable.empty();
+        }
+    }
 
 	@SuppressWarnings("unchecked")
 	private List<Node> getNodesFromJSON(String serviceId, String serviceUri, JSONObject index) {
-		List<Node> nodes = new ArrayList<>();
 
 		NodeBuilder serviceNode = NodeBuilder.node().withId(serviceId).withLane(2);
 
 		JSONObject links = index.getJSONObject(LINKS);
 		final boolean hasCuries = links.has(CURIES);
 
-		Set<String> keyset = new HashSet<>(links.keySet());
-
-		keyset.stream()
-			.filter(linkKey -> !CURIES.equals(linkKey))
-			.forEach(linkKey -> {
-				serviceNode.withLinkedFromNodeId(linkKey);
-
-				JSONObject link = links.getJSONObject(linkKey);
-
-				Node linkedNode = convertLinkToNodes(linkKey, link, serviceId);
-				if (hasCuries) {
-					String docs = resolveDocs(linkKey, links.getJSONArray(CURIES), serviceUri);
-
-					if (docs != null) {
-						linkedNode.addDetail("docs", docs);
-					}
-				}
-
-				nodes.add(linkedNode);
-			});
-
+		List<Node> nodes = links.keySet().stream()
+		                        .filter(linkKey -> !CURIES.equals(linkKey))
+		                        .peek(serviceNode::withLinkedFromNodeId)
+		                        .map(linkKey -> toNode(serviceId, serviceUri, links, hasCuries, linkKey))
+		                        .collect(Collectors.toList());
 		nodes.add(0, serviceNode.build());
-
 		return nodes;
+	}
+
+	private Node toNode(String serviceId, String serviceUri, JSONObject links, boolean hasCuries, String linkKey) {
+		JSONObject link = links.getJSONObject(linkKey);
+		Node linkedNode = convertLinkToNodes(linkKey, link, serviceId);
+		if (hasCuries) {
+			String docs = resolveDocs(linkKey, links.getJSONArray(CURIES), serviceUri);
+			if (docs != null) {
+				linkedNode.addDetail("docs", docs);
+			}
+		}
+		return linkedNode;
 	}
 
 	private Node convertLinkToNodes(String linkKey, JSONObject link, String linkToServiceId) {
 		return NodeBuilder.node()
-				.withId(linkKey)
-				.withLane(1)
-				.withLinkedToNodeId(linkToServiceId)
-				.withDetail("url", link.getString(HREF))
-				.withDetail("type", RESOURCE)
-				.withDetail("status", UP)
-				.build();
+		                  .withId(linkKey)
+		                  .withLane(1)
+		                  .withLinkedToNodeId(linkToServiceId)
+		                  .withDetail("url", link.getString(HREF))
+		                  .withDetail("type", RESOURCE)
+		                  .withDetail("status", UP)
+		                  .build();
 	}
 
 	private String resolveDocs(String linkKey, JSONArray curies, String serviceUri) {
-		String namespace = linkKey.substring(0, linkKey.indexOf(":"));
+		String namespace = linkKey.substring(0, linkKey.indexOf(':'));
+		return IntStream.range(0, curies.length())
+		                .mapToObj(curies::getJSONObject)
+		                .filter(curie -> curie.has(CURIE_NAME))
+		                .filter(curie -> curie.getString(CURIE_NAME).equals(namespace))
+		                .findFirst()
+		                .map(curie -> {
+			                String rel = substringAfter(linkKey,":");
+			                return serviceUri + curie.getString(HREF)
+			                                         .replace("{rel}", rel);
+		                })
+		                .orElse(null);
 
-		for (int i = 0; i < curies.length(); ) {
-			JSONObject curie = curies.getJSONObject(i);
-
-			if (curie.has(CURIE_NAME) && curie.getString(CURIE_NAME).equals(namespace)) {
-				return serviceUri + curie.getString(HREF).replace("{rel}", linkKey.substring(linkKey.indexOf(":") + 1));
-			}
-
-			++i;
-		}
-
-		return null;
 	}
 }

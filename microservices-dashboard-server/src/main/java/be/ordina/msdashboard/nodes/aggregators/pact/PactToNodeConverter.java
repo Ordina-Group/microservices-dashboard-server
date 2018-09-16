@@ -15,9 +15,9 @@
  */
 package be.ordina.msdashboard.nodes.aggregators.pact;
 
-import be.ordina.msdashboard.nodes.model.NodeTypes;
 import be.ordina.msdashboard.nodes.model.Node;
 import be.ordina.msdashboard.nodes.model.NodeBuilder;
+import be.ordina.msdashboard.nodes.model.NodeTypes;
 import com.jayway.jsonpath.JsonPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +46,7 @@ public class PactToNodeConverter {
 		NodeBuilder node = new NodeBuilder();
 		node.withId(consumer);
 		node.withLane(0);
-		paths.stream().forEach(path -> {
-			node.withLinkedToNodeId(convertPathToRel(path));
-		});
+		paths.forEach(path -> node.withLinkedToNodeId(convertPathToRel(path)));
 		Map<String, Object> details = new HashMap<>();
 		details.put("url", pactUrl);
 		//details.put("docs", pactUrl);
@@ -60,7 +58,7 @@ public class PactToNodeConverter {
 	}
 
 	private String convertPathToRel(String path) {
-		String rel = "";
+		String rel;
 		if (path.startsWith(relPath) || path.startsWith("/" + relPath)) {
 			rel = path.substring(path.indexOf(relPath) + relPath.length());
 		} else {

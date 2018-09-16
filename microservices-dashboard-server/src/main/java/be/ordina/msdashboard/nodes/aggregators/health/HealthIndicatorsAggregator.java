@@ -32,7 +32,6 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import java.util.List;
-import java.util.Map.Entry;
 
 import static be.ordina.msdashboard.nodes.aggregators.Constants.ZUUL;
 
@@ -80,9 +79,12 @@ public class HealthIndicatorsAggregator implements NodeAggregator {
 	private SecurityStrategyFactory securityStrategyFactory;
 
 	@Deprecated
-	public HealthIndicatorsAggregator(final DiscoveryClient discoveryClient, final UriResolver uriResolver,
-									  final HealthProperties properties, final NettyServiceCaller caller,
-									  final ErrorHandler errorHandler, final HealthToNodeConverter healthToNodeConverter) {
+	public HealthIndicatorsAggregator(final DiscoveryClient discoveryClient,
+	                                  final UriResolver uriResolver,
+									  final HealthProperties properties,
+									  final NettyServiceCaller caller,
+									  final ErrorHandler errorHandler,
+									  final HealthToNodeConverter healthToNodeConverter) {
 		this.discoveryClient = discoveryClient;
 		this.uriResolver = uriResolver;
 		this.properties = properties;
@@ -91,9 +93,12 @@ public class HealthIndicatorsAggregator implements NodeAggregator {
 		this.healthToNodeConverter = healthToNodeConverter;
 	}
 
-	public HealthIndicatorsAggregator(final DiscoveryClient discoveryClient, final UriResolver uriResolver,
-									  final HealthProperties properties, final NettyServiceCaller caller,
-									  final ErrorHandler errorHandler, final HealthToNodeConverter healthToNodeConverter,
+	public HealthIndicatorsAggregator(final DiscoveryClient discoveryClient,
+	                                  final UriResolver uriResolver,
+									  final HealthProperties properties,
+									  final NettyServiceCaller caller,
+									  final ErrorHandler errorHandler,
+									  final HealthToNodeConverter healthToNodeConverter,
 									  final SecurityStrategyFactory securityStrategyFactory) {
 		this(discoveryClient, uriResolver, properties, caller, errorHandler, healthToNodeConverter);
 		this.securityStrategyFactory = securityStrategyFactory;
@@ -104,17 +109,17 @@ public class HealthIndicatorsAggregator implements NodeAggregator {
 		final Object outboundSecurityObject = getOutboundSecurityObject();
 		Observable<Observable<Node>> observableObservable = getServiceIdsFromDiscoveryClient()
 				.map(id -> new ImmutablePair<>(id, resolveHealthCheckUrl(id)))
-				.doOnNext(pair -> logger.info("Creating health observable: " + pair))
-				.map(pair -> outboundSecurityObject != null ?
-						getHealthNodesFromService(pair.getLeft(), pair.getRight(), outboundSecurityObject) :
-						getHealthNodesFromService(pair.getLeft(), pair.getRight())
+				.doOnNext(pair -> logger.info("Creating health observable: {}", pair))
+				.map(pair -> outboundSecurityObject != null
+				             ? getHealthNodesFromService(pair.getLeft(), pair.getRight(), outboundSecurityObject)
+				             : getHealthNodesFromService(pair.getLeft(), pair.getRight())
 				)
-				.doOnNext(el -> logger.debug("Unmerged health observable: " + el))
+				.doOnNext(el -> logger.debug("Unmerged health observable: {}",  el))
 				.doOnError(e -> errorHandler.handleSystemError("Error filtering services: " + e.getMessage(), e))
 				.doOnCompleted(() -> logger.info("Completed getting all health observables"))
 				.retry();
 		return Observable.merge(observableObservable)
-				.doOnNext(el -> logger.debug("Merged health node: " + el.getId()))
+				.doOnNext(el -> logger.debug("Merged health node: {}", el.getId()))
 				.doOnError(e -> errorHandler.handleSystemError("Error filtering services: " + e.getMessage(), e))
 				.doOnCompleted(() -> logger.info("Completed merging all health observables"));
 	}
@@ -129,14 +134,17 @@ public class HealthIndicatorsAggregator implements NodeAggregator {
 	}
 
 	protected Observable<String> getServiceIdsFromDiscoveryClient() {
-		logger.info("Discovering services for health");
-		return Observable.from(discoveryClient.getServices()).subscribeOn(Schedulers.io()).publish().autoConnect()
-				.map(id -> id.toLowerCase())
-				.filter(id -> !id.equals(ZUUL))
-				.doOnNext(s -> logger.debug("Service discovered: " + s))
-				.doOnError(e -> errorHandler.handleSystemError("Error filtering services: " + e.getMessage(), e))
-				.retry();
-	}
+        logger.info("Discovering services for health");
+        return Observable.from(discoveryClient.getServices())
+                         .subscribeOn(Schedulers.io())
+                         .publish()
+                         .autoConnect()
+                         .map(String::toLowerCase)
+                         .filter(id -> !id.equals(ZUUL))
+                         .doOnNext(serviceId -> logger.debug("Service discovered: {}", serviceId))
+                         .doOnError(e -> errorHandler.handleSystemError("Error filtering services: " + e.getMessage(), e))
+                         .retry();
+    }
 
 	protected Observable<Node> getHealthNodesFromService(String serviceId, String url) {
 		return getHealthNodesFromService(serviceId, url, null);
@@ -145,18 +153,16 @@ public class HealthIndicatorsAggregator implements NodeAggregator {
 	protected Observable<Node> getHealthNodesFromService(String serviceId, String url, final Object outboundSecurityObject) {
 		HttpClientRequest<ByteBuf> request = HttpClientRequest.createGet(url);
 		applyOutboundSecurityStrategyOnRequest(request, outboundSecurityObject);
-		for (Entry<String, String> header : properties.getRequestHeaders().entrySet()) {
-			request.withHeader(header.getKey(), header.getValue());
-		}
-
+		properties.getRequestHeaders()
+		          .forEach(request::withHeader);
 		return caller.retrieveJsonFromRequest(serviceId, request)
-				.flatMap(el -> healthToNodeConverter.convertToNodes(serviceId, el))
-				.filter(node -> !properties.getFilteredServices().contains(node.getId()))
-				//TODO: .map(node -> springCloudEnricher.enrich(node))
-				.doOnNext(el -> logger.info("Health node {} discovered in url: {}", el.getId(), url))
-				.doOnError(e -> logger.error("Error during healthnode fetching: ", e))
-				.doOnCompleted(() -> logger.info("Completed emission of a health node observable from url: " + url))
-				.onErrorResumeNext(Observable.empty());
+		             .flatMap(el -> healthToNodeConverter.convertToNodes(serviceId, el))
+		             .filter(node -> !properties.getFilteredServices().contains(node.getId()))
+		             //TODO: .map(node -> springCloudEnricher.enrich(node))
+		             .doOnNext(node -> logger.info("Health node {} discovered in url: {}", node.getId(), url))
+		             .doOnError(e -> logger.error("Error during healthnode fetching: ", e))
+		             .doOnCompleted(() -> logger.info("Completed emission of a health node observable from url: {}", url))
+		             .onErrorResumeNext(Observable.empty());
 	}
 
 

@@ -15,15 +15,15 @@
  */
 package be.ordina.msdashboard.nodes.aggregators.health;
 
-import static be.ordina.msdashboard.nodes.model.NodeTypes.MICROSERVICE;
-import static be.ordina.msdashboard.nodes.model.Node.TYPE;
+import be.ordina.msdashboard.nodes.model.Node;
+import rx.Observable;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import rx.Observable;
-import be.ordina.msdashboard.nodes.model.Node;
+import static be.ordina.msdashboard.nodes.model.Node.TYPE;
+import static be.ordina.msdashboard.nodes.model.NodeTypes.MICROSERVICE;
 
 /**
  * @author Andreas Evers
@@ -42,33 +42,36 @@ public class HealthToNodeConverter {
 		if (!source.containsKey(STATUS)) {
 			throw new IllegalStateException("Health deserialization fails because no status was found at the root");
 		}
-		Set<Node> nodes = new HashSet<>();
+
 		Node topLevelNode = new Node(serviceId);
 		Map<String, Object> ownDetails = topLevelNode.getDetails();
 		ownDetails.put(STATUS, source.get(STATUS));
 		ownDetails.put(TYPE, MICROSERVICE);
+
+		Set<Node> nodes = new HashSet<>();
 		nodes.add(topLevelNode);
-		for (String key : source.keySet()) {
-			if (!STATUS.equals(key) && !properties.getFilteredServices().contains(key)) {
-				Object nested = source.get(key);
-				if (nested instanceof Map && ((Map) nested).containsKey(STATUS)) {
-					Node nestedNode = new Node(key);
-					copyDetails((Map<String, Object>) source.get(key), nestedNode.getDetails());
-					topLevelNode.getLinkedToNodeIds().add(nestedNode.getId());
-					nestedNode.getLinkedFromNodeIds().add(topLevelNode.getId());
-					nodes.add(nestedNode);
-				} else {
-					ownDetails.put(key, source.get(key));
-				}
-			}
-		}
+		source.entrySet()
+		      .stream()
+              .filter(entry -> !STATUS.equals(entry.getKey()))
+		      .filter(entry -> !properties.getFilteredServices().contains(entry.getKey()))
+		      .forEachOrdered(entry -> {
+			      Object nested = source.get(entry.getKey());
+			      if (nested instanceof Map && ((Map) nested).containsKey(STATUS)) {
+				      Node nestedNode = new Node(entry.getKey());
+				      copyDetails((Map<String, Object>) source.get(entry.getKey()), nestedNode.getDetails());
+				      topLevelNode.getLinkedToNodeIds().add(nestedNode.getId());
+				      nestedNode.getLinkedFromNodeIds().add(topLevelNode.getId());
+				      nodes.add(nestedNode);
+			      } else {
+				      ownDetails.put(entry.getKey(), source.get(entry.getKey()));
+			      }
+		      });
 		return Observable.from(nodes);
 	}
 
-	private static void copyDetails(Map<String, Object> source, Map<String, Object> target) {
-		for (Map.Entry<String, Object> sourceEntry : source.entrySet()) {
-			target.put(sourceEntry.getKey(), sourceEntry.getValue());
-		}
+	private static void copyDetails(Map<String, Object> source,
+	                                Map<String, Object> target) {
+		source.forEach(target::put);
 	}
 }
 

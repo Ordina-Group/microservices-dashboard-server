@@ -25,73 +25,77 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static be.ordina.msdashboard.nodes.model.Node.STATUS;
+import static be.ordina.msdashboard.nodes.model.Node.TYPE;
 import static be.ordina.msdashboard.nodes.model.NodeTypes.MICROSERVICE;
 import static be.ordina.msdashboard.nodes.model.NodeTypes.RESOURCE;
-import static be.ordina.msdashboard.nodes.model.Node.TYPE;
-import static be.ordina.msdashboard.nodes.model.Node.STATUS;
 
 /**
  * @author Andreas Evers
+ * @author Nikita Guchakov
  */
 public class MappingsToNodeConverter {
 
-	private static final Object METHOD = "method";
+    private static final Object METHOD = "method";
 
-	public static Observable<Node> convertToNodes(final String serviceId, final Map<String, Object> source) {
-		Set<Node> nodes = new HashSet<>();
-		Node topLevelNode = new Node(serviceId);
-		topLevelNode.setLane(2);
-		Map<String, Object> ownDetails = topLevelNode.getDetails();
-		ownDetails.put(TYPE, MICROSERVICE);
-		ownDetails.put(STATUS, "UP");
-		nodes.add(topLevelNode);
-		for (String key : source.keySet()) {
-			if (validMappingKey(key)) {
-				Object mapping = source.get(key);
-				if (mapping instanceof Map) {
-					if (isNonSpringMapping((Map) mapping)){
-						String url = extractUrl(key);
-						Node nestedNode = new Node(url);
-						nestedNode.setLane(1);
-						nestedNode.addDetail("url", url);
-						nestedNode.addDetail("type", RESOURCE);
-						nestedNode.addDetail("status", "UP");
-						extractMethods(key).ifPresent(methods -> nestedNode.addDetail("methods", methods));
-						topLevelNode.getLinkedFromNodeIds().add(nestedNode.getId());
-						nestedNode.getLinkedToNodeIds().add(topLevelNode.getId());
-						nodes.add(nestedNode);
-					}
-				}
-			}
-		}
-		return Observable.from(nodes);
-	}
+    public static Observable<Node> convertToNodes(final String serviceId, final Map<String, Object> source) {
+        Set<Node> nodes = new HashSet<>();
+        Node topLevelNode = new Node(serviceId);
+        topLevelNode.setLane(2);
+        Map<String, Object> ownDetails = topLevelNode.getDetails();
+        ownDetails.put(TYPE, MICROSERVICE);
+        ownDetails.put(STATUS, "UP");
+        nodes.add(topLevelNode);
+        source.keySet()
+              .stream()
+              .filter(MappingsToNodeConverter::validMappingKey)
+              .forEachOrdered(key -> {
+                  Object mapping = source.get(key);
+                  if (mapping instanceof Map && isNonSpringMapping((Map) mapping)) {
+                      nodes.add(toNode(topLevelNode, key));
+                  }
+              });
+        return Observable.from(nodes);
+    }
 
-	protected static String extractUrl(String key) {
-		Pattern pattern = Pattern.compile("\\{.*\\[(\\/[^\\]]*)\\].*\\}");
-		Matcher matcher = pattern.matcher(key);
-		if (matcher.find()) {
-			return matcher.group(1);
-		} else {
-			throw new IllegalStateException("No url found for mapping " + key);
-		}
-	}
+    private static Node toNode(Node topLevelNode, String key) {
+        String url = extractUrl(key);
+        Node nestedNode = new Node(url);
+        nestedNode.setLane(1);
+        nestedNode.addDetail("url", url);
+        nestedNode.addDetail("type", RESOURCE);
+        nestedNode.addDetail("status", "UP");
+        extractMethods(key).ifPresent(methods -> nestedNode.addDetail("methods", methods));
+        topLevelNode.getLinkedFromNodeIds().add(nestedNode.getId());
+        nestedNode.getLinkedToNodeIds().add(topLevelNode.getId());
+        return nestedNode;
+    }
 
-	protected static Optional<String> extractMethods(String key) {
-		Pattern pattern = Pattern.compile("\\{.*methods=\\[([^\\]]*)\\].*\\}");
-		Matcher matcher = pattern.matcher(key);
-		if (matcher.find()) {
-			return Optional.of(matcher.group(1));
-		} else {
-			return Optional.empty();
-		}
-	}
+    protected static String extractUrl(String key) {
+        Pattern pattern = Pattern.compile("\\{.*\\[(\\/[^\\]]*)\\].*\\}");
+        Matcher matcher = pattern.matcher(key);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } else {
+            throw new IllegalStateException("No url found for mapping " + key);
+        }
+    }
 
-	protected static boolean isNonSpringMapping(Map<String, String> mapping) {
-		return !mapping.containsKey(METHOD) || !mapping.get(METHOD).matches("[a-z]* .* org\\.springframework.*");
-	}
+    protected static Optional<String> extractMethods(String key) {
+        Pattern pattern = Pattern.compile("\\{.*methods=\\[([^\\]]*)\\].*\\}");
+        Matcher matcher = pattern.matcher(key);
+        if (matcher.find()) {
+            return Optional.of(matcher.group(1));
+        } else {
+            return Optional.empty();
+        }
+    }
 
-	protected static boolean validMappingKey(String key) {
-		return key.matches("(\\{.*\\[\\/.*].*\\})");
-	}
+    protected static boolean isNonSpringMapping(Map<String, String> mapping) {
+        return !mapping.containsKey(METHOD) || !mapping.get(METHOD).matches("[a-z]* .* org\\.springframework.*");
+    }
+
+    protected static boolean validMappingKey(String key) {
+        return key.matches("(\\{.*\\[\\/.*].*\\})");
+    }
 }

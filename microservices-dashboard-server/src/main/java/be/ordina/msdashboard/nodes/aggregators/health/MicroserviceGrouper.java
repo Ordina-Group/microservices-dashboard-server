@@ -19,13 +19,9 @@ import be.ordina.msdashboard.nodes.model.Node;
 
 import java.util.*;
 
-import static be.ordina.msdashboard.nodes.model.NodeTypes.MICROSERVICE;
-import static be.ordina.msdashboard.nodes.aggregators.Constants.ZUUL;
+import static be.ordina.msdashboard.nodes.aggregators.Constants.*;
 import static be.ordina.msdashboard.nodes.model.Node.TYPE;
-import static be.ordina.msdashboard.nodes.aggregators.Constants.CONFIG_SERVER;
-import static be.ordina.msdashboard.nodes.aggregators.Constants.DISCOVERY;
-import static be.ordina.msdashboard.nodes.aggregators.Constants.HYSTRIX;
-import static be.ordina.msdashboard.nodes.aggregators.Constants.TURBINE;
+import static be.ordina.msdashboard.nodes.model.NodeTypes.MICROSERVICE;
 
 /**
  * Groups microservice nodes retrieved by the {@link HealthIndicatorsAggregator}

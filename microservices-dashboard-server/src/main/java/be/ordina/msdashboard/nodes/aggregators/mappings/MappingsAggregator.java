@@ -32,7 +32,6 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import java.util.List;
-import java.util.Map;
 
 import static be.ordina.msdashboard.nodes.aggregators.Constants.ZUUL;
 
@@ -76,8 +75,10 @@ public class MappingsAggregator implements NodeAggregator {
 	private SecurityStrategyFactory securityStrategyFactory;
 
 	@Deprecated
-	public MappingsAggregator(final DiscoveryClient discoveryClient, final UriResolver uriResolver,
-							  final MappingsProperties properties, final NettyServiceCaller caller,
+	public MappingsAggregator(final DiscoveryClient discoveryClient,
+	                          final UriResolver uriResolver,
+							  final MappingsProperties properties,
+							  final NettyServiceCaller caller,
 							  final ErrorHandler errorHandler) {
 		this.discoveryClient = discoveryClient;
 		this.uriResolver = uriResolver;
@@ -86,9 +87,12 @@ public class MappingsAggregator implements NodeAggregator {
 		this.errorHandler = errorHandler;
 	}
 
-	public MappingsAggregator(final DiscoveryClient discoveryClient, final UriResolver uriResolver,
-							  final MappingsProperties properties, final NettyServiceCaller caller,
-							  final ErrorHandler errorHandler, final SecurityStrategyFactory securityStrategyFactory) {
+	public MappingsAggregator(final DiscoveryClient discoveryClient,
+	                          final UriResolver uriResolver,
+							  final MappingsProperties properties,
+							  final NettyServiceCaller caller,
+							  final ErrorHandler errorHandler,
+							  final SecurityStrategyFactory securityStrategyFactory) {
 		this(discoveryClient, uriResolver, properties, caller, errorHandler);
 		this.securityStrategyFactory = securityStrategyFactory;
 	}
@@ -98,17 +102,17 @@ public class MappingsAggregator implements NodeAggregator {
 		final Object outboundSecurityObject = getOutboundSecurityObject();
 		Observable<Observable<Node>> observableObservable = getServiceIdsFromDiscoveryClient()
 				.map(id -> new ImmutablePair<>(id, resolveMappingsUrl(id)))
-				.doOnNext(pair -> logger.info("Creating mappings observable: " + pair))
-				.map(pair -> outboundSecurityObject != null ?
-						getMappingNodesFromService(pair.getLeft(), pair.getRight(), outboundSecurityObject) :
-						getMappingNodesFromService(pair.getLeft(), pair.getRight())
+				.doOnNext(pair -> logger.info("Creating mappings observable: {}", pair))
+				.map(pair -> outboundSecurityObject != null
+				             ? getMappingNodesFromService(pair.getLeft(), pair.getRight(), outboundSecurityObject)
+				             : getMappingNodesFromService(pair.getLeft(), pair.getRight())
 				)
-				.doOnNext(el -> logger.debug("Unmerged mappings observable: " + el))
+				.doOnNext(el -> logger.debug("Unmerged mappings observable: {}", el))
 				.doOnError(e -> errorHandler.handleSystemError("Error filtering services: " + e.getMessage(), e))
 				.doOnCompleted(() -> logger.info("Completed getting all mappings observables"))
 				.retry();
 		return Observable.merge(observableObservable)
-				.doOnNext(el -> logger.debug("Merged health node: " + el.getId()))
+				.doOnNext(el -> logger.debug("Merged health node: {}", el.getId()))
 				.doOnError(e -> errorHandler.handleSystemError("Error filtering services: " + e.getMessage(), e))
 				.doOnCompleted(() -> logger.info("Completed merging all mappings observables"));
 	}
@@ -124,12 +128,15 @@ public class MappingsAggregator implements NodeAggregator {
 
 	protected Observable<String> getServiceIdsFromDiscoveryClient() {
 		logger.info("Discovering services for mappings");
-		return Observable.from(discoveryClient.getServices()).subscribeOn(Schedulers.io()).publish().autoConnect()
-				.map(id -> id.toLowerCase())
-				.filter(id -> !id.equals(ZUUL))
-				.doOnNext(s -> logger.debug("Service discovered: " + s))
-				.doOnError(e -> errorHandler.handleSystemError("Error filtering services: " + e.getMessage(), e))
-				.retry();
+		return Observable.from(discoveryClient.getServices())
+		                 .subscribeOn(Schedulers.io())
+		                 .publish()
+		                 .autoConnect()
+		                 .map(String::toLowerCase)
+		                 .filter(id -> !id.equals(ZUUL))
+		                 .doOnNext(serviceId -> logger.debug("Service discovered: {}", serviceId))
+		                 .doOnError(e -> errorHandler.handleSystemError("Error filtering services: " + e.getMessage(), e))
+		                 .retry();
 	}
 
 	@Deprecated
@@ -140,16 +147,15 @@ public class MappingsAggregator implements NodeAggregator {
 	protected Observable<Node> getMappingNodesFromService(String serviceId, String url, final Object outboundSecurityObject) {
 		HttpClientRequest<ByteBuf> request = HttpClientRequest.createGet(url);
 		applyOutboundSecurityStrategyOnRequest(request, outboundSecurityObject);
-		for (Map.Entry<String, String> header : properties.getRequestHeaders().entrySet()) {
-			request.withHeader(header.getKey(), header.getValue());
-		}
+		properties.getRequestHeaders()
+		          .forEach(request::withHeader);
 		return caller.retrieveJsonFromRequest(serviceId, request)
 				.map(source -> MappingsToNodeConverter.convertToNodes(serviceId, source))
-				.flatMap(el -> el)
+				.flatMap(nodes -> nodes)
 				.filter(node -> !properties.getFilteredServices().contains(node.getId()))
 				.doOnNext(el -> logger.info("Mapping node {} discovered in url: {}", el.getId(), url))
 				.doOnError(e -> logger.error("Error during mapping node fetching: ", e))
-				.doOnCompleted(() -> logger.info("Completed emission of a mapping node observable from url: " + url))
+				.doOnCompleted(() -> logger.info("Completed emission of a mapping node observable from url: {}", url))
 				.onErrorResumeNext(Observable.empty());
 	}
 
