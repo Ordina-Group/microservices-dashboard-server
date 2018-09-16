@@ -35,7 +35,7 @@ public class HealthPropertiesTest {
     private HealthProperties healthProperties;
 
     @Test
-    public void should_set_properties_when_properties_list_size_is_greater_that_default() throws Exception {
+    public void shouldSetPropertiesWhenPropertiesListSizeIsGreaterThatDefault() throws Exception {
         assertThat(healthProperties.getFilteredServices())
                 .isEqualTo(asList("a1", "a2", "a3", "a4", "a5", "a6", "a7"));
     }
