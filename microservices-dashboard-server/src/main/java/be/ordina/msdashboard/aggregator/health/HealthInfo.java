@@ -11,4 +11,11 @@ public class HealthInfo {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public static HealthInfo withStatus(String status) {
+		HealthInfo healthInfo = new HealthInfo();
+		healthInfo.setStatus(status);
+
+		return healthInfo;
+	}
 }
