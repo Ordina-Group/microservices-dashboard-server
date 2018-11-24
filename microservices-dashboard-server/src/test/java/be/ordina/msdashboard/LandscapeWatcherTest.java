@@ -1,13 +1,25 @@
+/*
+ * Copyright 2015-2018 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package be.ordina.msdashboard;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import be.ordina.msdashboard.events.NewServiceDiscovered;
-import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
-import be.ordina.msdashboard.events.ServiceDeregistered;
-import be.ordina.msdashboard.events.ServiceInstanceDeregistered;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +28,11 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import be.ordina.msdashboard.events.NewServiceDiscovered;
+import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
+import be.ordina.msdashboard.events.ServiceDeregistered;
+import be.ordina.msdashboard.events.ServiceInstanceDeregistered;
 
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.client.DefaultServiceInstance;
@@ -26,10 +43,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.times;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.BDDMockito.verifyNoMoreInteractions;
+import static org.mockito.BDDMockito.when;
 
 /**
  * @author Tim Ysewyn
@@ -72,24 +89,24 @@ public class LandscapeWatcherTest {
 		verify(this.discoveryClient, times(2)).getInstances("c");
 		verifyNoMoreInteractions(this.discoveryClient);
 
-		verify(this.publisher, times(10)).publishEvent(applicationEventArgumentCaptor.capture());
+		verify(this.publisher, times(10)).publishEvent(this.applicationEventArgumentCaptor.capture());
 		verifyNoMoreInteractions(this.publisher);
 
-		List<ApplicationEvent> applicationEvents = applicationEventArgumentCaptor.getAllValues();
+		List<ApplicationEvent> applicationEvents = this.applicationEventArgumentCaptor.getAllValues();
 
 		assertThat(applicationEvents).hasSize(10);
 
 		List<NewServiceDiscovered> newServiceDiscoveredEvents = applicationEvents.stream().filter(e -> e instanceof NewServiceDiscovered)
-				.map(e -> (NewServiceDiscovered)e)
+				.map(e -> (NewServiceDiscovered) e)
 				.collect(toList());
 		List<NewServiceInstanceDiscovered> newServiceInstanceDiscoveredEvents = applicationEvents.stream().filter(e -> e instanceof NewServiceInstanceDiscovered)
-				.map(e -> (NewServiceInstanceDiscovered)e)
+				.map(e -> (NewServiceInstanceDiscovered) e)
 				.collect(toList());
 		List<ServiceDeregistered> serviceDeregisteredEvents = applicationEvents.stream().filter(e -> e instanceof ServiceDeregistered)
-				.map(e -> (ServiceDeregistered)e)
+				.map(e -> (ServiceDeregistered) e)
 				.collect(toList());
 		List<ServiceInstanceDeregistered> serviceInstanceDeregisteredEvents = applicationEvents.stream().filter(e -> e instanceof ServiceInstanceDeregistered)
-				.map(e -> (ServiceInstanceDeregistered)e)
+				.map(e -> (ServiceInstanceDeregistered) e)
 				.collect(toList());
 
 		assertThat(newServiceDiscoveredEvents).hasSize(3);

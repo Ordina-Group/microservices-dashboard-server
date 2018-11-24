@@ -14,20 +14,26 @@
  * limitations under the License.
  */
 
-package be.ordina.msdashboard.events;
+package be.ordina.msdashboard.autoconfigure;
 
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.context.ApplicationEvent;
+import be.ordina.msdashboard.LandscapeWatcher;
+
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * Event that is thrown whenever a known service instance is deregistered.
+ * Auto-configuration for the microservices dashboard server.
  *
  * @author Tim Ysewyn
  */
-public class ServiceInstanceDeregistered extends ApplicationEvent {
+@Configuration
+public class MicroservicesDashboardServerAutoConfiguration {
 
-	public ServiceInstanceDeregistered(ServiceInstance serviceInstance) {
-		super(serviceInstance);
+	@Bean
+	LandscapeWatcher landscapeWatcher(DiscoveryClient discoveryClient, ApplicationEventPublisher publisher) {
+		return new LandscapeWatcher(discoveryClient, publisher);
 	}
 
 }
