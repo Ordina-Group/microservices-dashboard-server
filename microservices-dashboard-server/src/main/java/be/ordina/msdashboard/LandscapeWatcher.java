@@ -31,15 +31,13 @@ import be.ordina.msdashboard.events.NewServiceDiscovered;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 import be.ordina.msdashboard.events.ServiceDeregistered;
 import be.ordina.msdashboard.events.ServiceInstanceDeregistered;
+
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.event.HeartbeatEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
-
-import java.net.URI;
-import java.util.*;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
@@ -138,10 +136,10 @@ public class LandscapeWatcher {
 	}
 
 	public Map<String, List<ServiceInstance>> getServiceInstances() {
-		return serviceInstances;
+		return this.serviceInstances;
 	}
 
-	private static class ServiceInstanceWrapper implements ServiceInstance {
+	private static final class ServiceInstanceWrapper implements ServiceInstance {
 
 		private final ServiceInstance delegate;
 
