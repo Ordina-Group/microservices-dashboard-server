@@ -27,6 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.BDDMockito;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,6 +39,8 @@ import be.ordina.msdashboard.aggregator.health.events.HealthInfoFailed;
 import be.ordina.msdashboard.aggregator.health.events.HealthInfoRetrieved;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
@@ -47,10 +50,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.times;
-import static org.mockito.BDDMockito.verify;
-import static org.mockito.BDDMockito.when;
 
 /**
  * Unit test for the HealthAggregator.
@@ -70,7 +69,6 @@ public class HealthAggregatorTest {
 	@Mock
 	private ApplicationEventPublisher applicationEventPublisher;
 
-
 	@Mock
 	private WebClient.RequestHeadersUriSpec requestHeadersUriSpec;
 	@Mock
@@ -86,16 +84,17 @@ public class HealthAggregatorTest {
 
 	@Before
 	public void setup() {
-		when(this.webClient.get()).thenReturn(this.requestHeadersUriSpec);
-		when(this.requestHeadersUriSpec.uri(any(URI.class))).thenReturn(this.requestHeadersSpec);
-		when(this.requestHeadersSpec.retrieve()).thenReturn(this.responseSpec);
+		BDDMockito.when(this.webClient.get()).thenReturn(this.requestHeadersUriSpec);
+		BDDMockito.when(this.requestHeadersUriSpec.uri(BDDMockito.any(URI.class))).thenReturn(this.requestHeadersSpec);
+		BDDMockito.when(this.requestHeadersSpec.retrieve()).thenReturn(this.responseSpec);
 	}
 
 	@Test
 	public void shouldHandleApplicationInstanceEvent() {
-		NewServiceInstanceDiscovered newServiceInstanceDiscovered = NewServiceInstanceDiscoveredMother.defaultNewServiceInstanceDiscovered();
+		NewServiceInstanceDiscovered newServiceInstanceDiscovered =
+				NewServiceInstanceDiscoveredMother.defaultNewServiceInstanceDiscovered();
 
-		when(this.responseSpec.bodyToMono(HealthInfo.class)).thenReturn(Mono.just(HealthInfo.withStatus("UP")));
+		BDDMockito.when(this.responseSpec.bodyToMono(Health.class)).thenReturn(Mono.just(Health.up().build()));
 
 		this.healthAggregator.handleApplicationInstanceEvent(newServiceInstanceDiscovered);
 
@@ -104,9 +103,10 @@ public class HealthAggregatorTest {
 
 	@Test
 	public void shouldHandleApplicationInstanceEventHandlesError() {
-		NewServiceInstanceDiscovered newServiceInstanceDiscovered = NewServiceInstanceDiscoveredMother.defaultNewServiceInstanceDiscovered();
+		NewServiceInstanceDiscovered newServiceInstanceDiscovered =
+				NewServiceInstanceDiscoveredMother.defaultNewServiceInstanceDiscovered();
 
-		when(this.responseSpec.bodyToMono(HealthInfo.class)).thenReturn(Mono.error(new RuntimeException("OOPSIE!")));
+		BDDMockito.when(this.responseSpec.bodyToMono(Health.class)).thenReturn(Mono.error(new RuntimeException("OOPSIE!")));
 
 		this.healthAggregator.handleApplicationInstanceEvent(newServiceInstanceDiscovered);
 
@@ -114,21 +114,24 @@ public class HealthAggregatorTest {
 	}
 
 	private void assertHealthInfoRetrievalSucceeded(ServiceInstance serviceInstance) {
-		verify(this.applicationEventPublisher).publishEvent(this.applicationEventArgumentCaptor.capture());
+		BDDMockito.verify(this.applicationEventPublisher).publishEvent(this.applicationEventArgumentCaptor.capture());
 
-		assertThat(this.outputCapture.toString()).contains(String.format("Found health information for service [%s]", serviceInstance.getServiceId()));
+		assertThat(this.outputCapture.toString())
+				.contains(String.format("Found health information for service [%s]", serviceInstance.getServiceId()));
 
 		HealthInfoRetrieved healthInfoRetrieved = (HealthInfoRetrieved) this.applicationEventArgumentCaptor.getValue();
 		assertThat(healthInfoRetrieved).isNotNull();
-		assertThat(healthInfoRetrieved.getHealthInfo()).isNotNull();
-		assertThat(healthInfoRetrieved.getHealthInfo().getStatus()).isEqualTo("UP");
+		assertThat(healthInfoRetrieved.getHealth()).isNotNull();
+		assertThat(healthInfoRetrieved.getHealth().getStatus()).isEqualTo(Status.UP);
 		assertThat(healthInfoRetrieved.getSource()).isEqualTo(serviceInstance);
 	}
 
 	private void assertHealthInfoRetrievalFailed(ServiceInstance serviceInstance) {
-		verify(this.applicationEventPublisher).publishEvent(this.applicationEventArgumentCaptor.capture());
+		BDDMockito.verify(this.applicationEventPublisher).publishEvent(this.applicationEventArgumentCaptor.capture());
 
-		assertThat(this.outputCapture.toString()).contains(String.format("Could not retrieve health information for [http://%s:%d/actuator/health]", serviceInstance.getHost(), serviceInstance.getPort()));
+		assertThat(this.outputCapture.toString()).contains(
+				String.format("Could not retrieve health information for [http://%s:%d/actuator/health]",
+						serviceInstance.getHost(), serviceInstance.getPort()));
 
 		HealthInfoFailed healthInfoFailed = (HealthInfoFailed) this.applicationEventArgumentCaptor.getValue();
 		assertThat(healthInfoFailed).isNotNull();
@@ -147,8 +150,8 @@ public class HealthAggregatorTest {
 		services.put("MovieService", Arrays.asList(serviceInstanceA, serviceInstanceB));
 		services.put("OtherService", Arrays.asList(serviceInstanceC, serviceInstanceD));
 
-		when(this.landscapeWatcher.getServiceInstances()).thenReturn(services);
-		when(this.responseSpec.bodyToMono(HealthInfo.class)).thenReturn(Mono.just(HealthInfo.withStatus("UP")));
+		BDDMockito.when(this.landscapeWatcher.getServiceInstances()).thenReturn(services);
+		BDDMockito.when(this.responseSpec.bodyToMono(Health.class)).thenReturn(Mono.just(Health.up().build()));
 
 		this.healthAggregator.aggregateHealthInformation();
 
@@ -156,7 +159,8 @@ public class HealthAggregatorTest {
 	}
 
 	private void assertHealthInfoRetrievalSucceeded(Map<String, List<ServiceInstance>> serviceInstances) {
-		List<ServiceInstance> allServiceInstances = serviceInstances.entrySet().stream().flatMap(entry -> entry.getValue().stream()).collect(toList());
+		List<ServiceInstance> allServiceInstances =
+				serviceInstances.entrySet().stream().flatMap(entry -> entry.getValue().stream()).collect(toList());
 
 		assertHealthInfoRetrievalSucceeded(allServiceInstances);
 	}
@@ -164,7 +168,8 @@ public class HealthAggregatorTest {
 	private void assertHealthInfoRetrievalSucceeded(List<ServiceInstance> serviceInstances) {
 		assertThat(this.outputCapture.toString()).contains("Aggregating [HEALTH] information");
 
-		verify(this.applicationEventPublisher, times(serviceInstances.size())).publishEvent(this.applicationEventArgumentCaptor.capture());
+		BDDMockito.verify(this.applicationEventPublisher, BDDMockito.times(serviceInstances.size()))
+				.publishEvent(this.applicationEventArgumentCaptor.capture());
 
 		List<HealthInfoRetrieved> healthInfoRetrievals = (List) this.applicationEventArgumentCaptor.getAllValues();
 
@@ -172,8 +177,8 @@ public class HealthAggregatorTest {
 			ServiceInstance serviceInstance = (ServiceInstance) healthInfoRetrieved.getSource();
 
 			assertThat(healthInfoRetrieved).isNotNull();
-			assertThat(healthInfoRetrieved.getHealthInfo()).isNotNull();
-			assertThat(healthInfoRetrieved.getHealthInfo().getStatus()).isEqualTo("UP");
+			assertThat(healthInfoRetrieved.getHealth()).isNotNull();
+			assertThat(healthInfoRetrieved.getHealth().getStatus()).isEqualTo(Status.UP);
 			assertThat(serviceInstances).contains(serviceInstance);
 		});
 	}

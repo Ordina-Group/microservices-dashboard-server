@@ -26,6 +26,7 @@ import be.ordina.msdashboard.aggregator.health.events.HealthInfoFailed;
 import be.ordina.msdashboard.aggregator.health.events.HealthInfoRetrieved;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 
+import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -42,7 +43,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class HealthAggregator {
 
-	private static final Logger LOG = LoggerFactory.getLogger(HealthAggregator.class);
+	private static final Logger logger = LoggerFactory.getLogger(HealthAggregator.class);
 
 	private final WebClient webClient;
 	private final LandscapeWatcher landscapeWatcher;
@@ -50,14 +51,14 @@ public class HealthAggregator {
 	private final UriComponentsBuilder uriComponentsBuilder;
 
 	public HealthAggregator(LandscapeWatcher landscapeWatcher, WebClient webClient,
-		ApplicationEventPublisher publisher) {
+							ApplicationEventPublisher publisher) {
 		this.landscapeWatcher = landscapeWatcher;
 		this.webClient = webClient;
 		this.publisher = publisher;
 		this.uriComponentsBuilder = UriComponentsBuilder.newInstance().path("/actuator/health");
 	}
 
-	@EventListener({ NewServiceInstanceDiscovered.class })
+	@EventListener({NewServiceInstanceDiscovered.class})
 	public void handleApplicationInstanceEvent(NewServiceInstanceDiscovered event) {
 		ServiceInstance serviceInstance = (ServiceInstance) event.getSource();
 		checkHealthInformation(serviceInstance);
@@ -65,25 +66,27 @@ public class HealthAggregator {
 
 	@Scheduled(fixedRateString = "${aggregator.health.rate}")
 	public void aggregateHealthInformation() {
-		LOG.debug("Aggregating [HEALTH] information");
+		logger.debug("Aggregating [HEALTH] information");
 
 		this.landscapeWatcher.getServiceInstances()
-			.forEach((serviceId, instances) -> instances.forEach(this::checkHealthInformation));
+				.entrySet()
+				.parallelStream()
+				.forEach(entry -> entry.getValue().parallelStream().forEach(this::checkHealthInformation));
 	}
 
 	private void checkHealthInformation(ServiceInstance instance) {
 		URI uri = this.uriComponentsBuilder.uri(instance.getUri()).build().toUri();
 
-		this.webClient.get().uri(uri).retrieve().bodyToMono(HealthInfo.class)
-			.doOnError(exception -> {
-				LOG.debug("Could not retrieve health information for [" + uri + "]");
+		this.webClient.get().uri(uri).retrieve().bodyToMono(Health.class)
+				.doOnError(exception -> {
+					logger.debug("Could not retrieve health information for [" + uri + "]");
 
-				this.publisher.publishEvent(new HealthInfoFailed(instance));
-			})
-			.subscribe(healthInfo -> {
-				LOG.debug("Found health information for service [{}]", instance.getServiceId());
+					this.publisher.publishEvent(new HealthInfoFailed(instance));
+				})
+				.subscribe(healthInfo -> {
+					logger.debug("Found health information for service [{}]", instance.getServiceId());
 
-				this.publisher.publishEvent(new HealthInfoRetrieved(instance, healthInfo));
-			});
+					this.publisher.publishEvent(new HealthInfoRetrieved(instance, healthInfo));
+				});
 	}
 }

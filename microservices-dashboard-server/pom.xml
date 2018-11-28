@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -41,13 +41,18 @@
 			<name>Tim Ysewyn</name>
 			<email>tim.ysewyn@ordina.be</email>
 		</developer>
+		<developer>
+			<id>dhubau</id>
+			<name>Dieter Hubau</name>
+			<email>dieter.hubau@ordina.be</email>
+		</developer>
 	</developers>
 
 	<properties>
 		<java.version>1.8</java.version>
 		<apache.commons.collection.version>4.2</apache.commons.collection.version>
 		<main.basedir>${basedir}</main.basedir>
-        <spring.cloud.version>Greenwich.M1</spring.cloud.version>
+		<spring.cloud.version>Greenwich.M1</spring.cloud.version>
 		<spring.boot.version>${project.parent.version}</spring.boot.version>
 	</properties>
 
@@ -124,6 +129,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
 		<!-- SPRING CLOUD -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -175,9 +184,9 @@
 					</execution>
 				</executions>
 			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
 					<includes>
 						<include>**/*Test.java</include>

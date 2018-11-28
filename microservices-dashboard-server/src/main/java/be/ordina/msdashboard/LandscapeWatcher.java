@@ -65,14 +65,14 @@ public class LandscapeWatcher {
 		this.publisher = publisher;
 	}
 
-	@EventListener({ ApplicationStartedEvent.class })
+	@EventListener({ApplicationStartedEvent.class})
 	public void discoverLandscape() {
 		logger.debug("Discovering landscape");
 		this.services = this.discoveryClient.getServices();
 		processNewServices(this.services);
 	}
 
-	@EventListener({ HeartbeatEvent.class })
+	@EventListener({HeartbeatEvent.class})
 	public void checkForChangesInLandscape() {
 		logger.debug("Checking for changes in landscape");
 		List<String> retrievedServices = this.discoveryClient.getServices();
@@ -84,9 +84,9 @@ public class LandscapeWatcher {
 
 	private List<ServiceInstance> getInstances(String service) {
 		return this.discoveryClient.getInstances(service)
-			.stream()
-			.map(ServiceInstanceWrapper::new)
-			.collect(toList());
+				.stream()
+				.map(ServiceInstanceWrapper::new)
+				.collect(toList());
 	}
 
 	private void processNewServices(Collection<String> newServices) {
@@ -192,17 +192,17 @@ public class LandscapeWatcher {
 			}
 			ServiceInstance that = (ServiceInstance) o;
 			return this.delegate.getPort() == that.getPort() &&
-				this.delegate.isSecure() == that.isSecure() &&
-				Objects.equals(this.delegate.getServiceId(), that.getServiceId()) &&
-				Objects.equals(this.delegate.getHost(), that.getHost());
+					this.delegate.isSecure() == that.isSecure() &&
+					Objects.equals(this.delegate.getServiceId(), that.getServiceId()) &&
+					Objects.equals(this.delegate.getHost(), that.getHost());
 		}
 
 		@Override
 		public int hashCode() {
 			return Objects.hash(this.delegate.getServiceId(),
-				this.delegate.getHost(),
-				this.delegate.getPort(),
-				this.delegate.isSecure());
+					this.delegate.getHost(),
+					this.delegate.getPort(),
+					this.delegate.isSecure());
 		}
 	}
 }

@@ -31,11 +31,7 @@ public final class NewServiceInstanceDiscoveredMother {
 
 	public static NewServiceInstanceDiscovered defaultNewServiceInstanceDiscovered() {
 		DefaultServiceInstance serviceInstance = new DefaultServiceInstance("a", "host", 8080, false);
-		NewServiceInstanceDiscovered newServiceInstanceDiscovered = new NewServiceInstanceDiscovered(serviceInstance);
 
-		HealthInfo healthInfo = new HealthInfo();
-		healthInfo.setStatus("UP");
-
-		return newServiceInstanceDiscovered;
+		return new NewServiceInstanceDiscovered(serviceInstance);
 	}
 }

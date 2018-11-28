@@ -49,6 +49,8 @@ import static org.mockito.BDDMockito.verifyNoMoreInteractions;
 import static org.mockito.BDDMockito.when;
 
 /**
+ * Landscape Watcher Test.
+ *
  * @author Tim Ysewyn
  */
 @RunWith(MockitoJUnitRunner.class)
