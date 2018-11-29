@@ -22,6 +22,7 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * Auto-configuration for the microservices dashboard server.
@@ -36,4 +37,8 @@ public class MicroservicesDashboardServerAutoConfiguration {
 		return new LandscapeWatcher(discoveryClient, publisher);
 	}
 
+	@Bean
+	public WebClient webClient() {
+		return WebClient.create();
+	}
 }

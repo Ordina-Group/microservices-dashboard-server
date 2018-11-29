@@ -17,7 +17,11 @@
 package be.ordina.msdashboard.aggregator.health;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +31,7 @@ import be.ordina.msdashboard.aggregator.health.events.HealthInfoRetrieved;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.Status;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
@@ -40,7 +45,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  *
  * @author Dieter Hubau
  */
-@Component
+@Component("msDashboardHealthAggregator")
 public class HealthAggregator {
 
 	private static final Logger logger = LoggerFactory.getLogger(HealthAggregator.class);
@@ -50,8 +55,7 @@ public class HealthAggregator {
 	private final ApplicationEventPublisher publisher;
 	private final UriComponentsBuilder uriComponentsBuilder;
 
-	public HealthAggregator(LandscapeWatcher landscapeWatcher, WebClient webClient,
-							ApplicationEventPublisher publisher) {
+	public HealthAggregator(LandscapeWatcher landscapeWatcher, WebClient webClient, ApplicationEventPublisher publisher) {
 		this.landscapeWatcher = landscapeWatcher;
 		this.webClient = webClient;
 		this.publisher = publisher;
@@ -64,7 +68,7 @@ public class HealthAggregator {
 		checkHealthInformation(serviceInstance);
 	}
 
-	@Scheduled(fixedRateString = "${aggregator.health.rate}")
+	@Scheduled(fixedRateString = "${aggregator.health.rate:10000}")
 	public void aggregateHealthInformation() {
 		logger.debug("Aggregating [HEALTH] information");
 
@@ -77,9 +81,10 @@ public class HealthAggregator {
 	private void checkHealthInformation(ServiceInstance instance) {
 		URI uri = this.uriComponentsBuilder.uri(instance.getUri()).build().toUri();
 
-		this.webClient.get().uri(uri).retrieve().bodyToMono(Health.class)
+		this.webClient.get().uri(uri).retrieve().bodyToMono(HealthWrapper.class)
+				.map(HealthWrapper::getHealth)
 				.doOnError(exception -> {
-					logger.debug("Could not retrieve health information for [" + uri + "]");
+					logger.debug("Could not retrieve health information for [" + uri + "]", exception);
 
 					this.publisher.publishEvent(new HealthInfoFailed(instance));
 				})
@@ -88,5 +93,19 @@ public class HealthAggregator {
 
 					this.publisher.publishEvent(new HealthInfoRetrieved(instance, healthInfo));
 				});
+	}
+
+	static private class HealthWrapper {
+
+		private Health health;
+
+		@JsonCreator
+		public HealthWrapper(@JsonProperty("status") Status status, @JsonProperty("details") Map<String, Object> details) {
+			this.health = Health.status(status).withDetails(details == null ? new HashMap<>() : details).build();
+		}
+
+		Health getHealth() {
+			return health;
+		}
 	}
 }
