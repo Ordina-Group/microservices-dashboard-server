@@ -82,6 +82,7 @@ public class HealthAggregator {
 		URI uri = this.uriComponentsBuilder.uri(instance.getUri()).build().toUri();
 
 		this.webClient.get().uri(uri).retrieve().bodyToMono(HealthWrapper.class)
+				.defaultIfEmpty(new HealthWrapper(Status.DOWN, new HashMap<>()))
 				.map(HealthWrapper::getHealth)
 				.doOnError(exception -> {
 					logger.debug("Could not retrieve health information for [" + uri + "]", exception);
@@ -95,7 +96,10 @@ public class HealthAggregator {
 				});
 	}
 
-	static private class HealthWrapper {
+	/**
+	 * Wrapper for the Health class since it doesn't have correct constructors for Jackson.
+	 */
+	static protected class HealthWrapper {
 
 		private Health health;
 
@@ -105,7 +109,7 @@ public class HealthAggregator {
 		}
 
 		Health getHealth() {
-			return health;
+			return this.health;
 		}
 	}
 }

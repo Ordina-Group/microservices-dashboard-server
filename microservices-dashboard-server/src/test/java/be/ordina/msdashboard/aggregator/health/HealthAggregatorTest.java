@@ -39,7 +39,6 @@ import be.ordina.msdashboard.aggregator.health.events.HealthInfoFailed;
 import be.ordina.msdashboard.aggregator.health.events.HealthInfoRetrieved;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 
-import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.cloud.client.DefaultServiceInstance;
@@ -94,7 +93,7 @@ public class HealthAggregatorTest {
 		NewServiceInstanceDiscovered newServiceInstanceDiscovered =
 				NewServiceInstanceDiscoveredMother.defaultNewServiceInstanceDiscovered();
 
-		BDDMockito.when(this.responseSpec.bodyToMono(Health.class)).thenReturn(Mono.just(Health.up().build()));
+		BDDMockito.when(this.responseSpec.bodyToMono(HealthAggregator.HealthWrapper.class)).thenReturn(Mono.just(new HealthAggregator.HealthWrapper(Status.UP, new HashMap<>())));
 
 		this.healthAggregator.handleApplicationInstanceEvent(newServiceInstanceDiscovered);
 
@@ -106,7 +105,7 @@ public class HealthAggregatorTest {
 		NewServiceInstanceDiscovered newServiceInstanceDiscovered =
 				NewServiceInstanceDiscoveredMother.defaultNewServiceInstanceDiscovered();
 
-		BDDMockito.when(this.responseSpec.bodyToMono(Health.class)).thenReturn(Mono.error(new RuntimeException("OOPSIE!")));
+		BDDMockito.when(this.responseSpec.bodyToMono(HealthAggregator.HealthWrapper.class)).thenReturn(Mono.error(new RuntimeException("OOPSIE!")));
 
 		this.healthAggregator.handleApplicationInstanceEvent(newServiceInstanceDiscovered);
 
@@ -151,7 +150,7 @@ public class HealthAggregatorTest {
 		services.put("OtherService", Arrays.asList(serviceInstanceC, serviceInstanceD));
 
 		BDDMockito.when(this.landscapeWatcher.getServiceInstances()).thenReturn(services);
-		BDDMockito.when(this.responseSpec.bodyToMono(Health.class)).thenReturn(Mono.just(Health.up().build()));
+		BDDMockito.when(this.responseSpec.bodyToMono(HealthAggregator.HealthWrapper.class)).thenReturn(Mono.just(new HealthAggregator.HealthWrapper(Status.UP, new HashMap<>())));
 
 		this.healthAggregator.aggregateHealthInformation();
 
