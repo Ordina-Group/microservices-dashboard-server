@@ -35,8 +35,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import reactor.core.publisher.Mono;
 
 import be.ordina.msdashboard.LandscapeWatcher;
-import be.ordina.msdashboard.aggregator.health.events.HealthInfoFailed;
-import be.ordina.msdashboard.aggregator.health.events.HealthInfoRetrieved;
+import be.ordina.msdashboard.events.HealthInfoFailed;
+import be.ordina.msdashboard.events.HealthInfoRetrieved;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 
 import org.springframework.boot.actuate.health.Status;

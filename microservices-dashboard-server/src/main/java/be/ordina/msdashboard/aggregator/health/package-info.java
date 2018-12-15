@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-package be.ordina.msdashboard.aggregator.health.events;
-
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.context.ApplicationEvent;
-
 /**
- * An applicationEvent which signals a failure while retrieving HealthInfo.
- *
- * @author Dieter Hubau
+ * This is the root package for the microservices dashboard server application.
+ * It contains the main annotation to enable the dashboard.
  */
-public class HealthInfoFailed extends ApplicationEvent {
-
-	public HealthInfoFailed(ServiceInstance instance) {
-		super(instance);
-	}
-}
+package be.ordina.msdashboard.aggregator.health;

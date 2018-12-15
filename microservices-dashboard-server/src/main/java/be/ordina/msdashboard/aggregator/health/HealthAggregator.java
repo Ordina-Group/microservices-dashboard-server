@@ -26,8 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import be.ordina.msdashboard.LandscapeWatcher;
-import be.ordina.msdashboard.aggregator.health.events.HealthInfoFailed;
-import be.ordina.msdashboard.aggregator.health.events.HealthInfoRetrieved;
+import be.ordina.msdashboard.events.HealthInfoFailed;
+import be.ordina.msdashboard.events.HealthInfoRetrieved;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 
 import org.springframework.boot.actuate.health.Health;
@@ -99,12 +99,12 @@ public class HealthAggregator {
 	/**
 	 * Wrapper for the Health class since it doesn't have correct constructors for Jackson.
 	 */
-	static protected class HealthWrapper {
+	static class HealthWrapper {
 
 		private Health health;
 
 		@JsonCreator
-		public HealthWrapper(@JsonProperty("status") Status status, @JsonProperty("details") Map<String, Object> details) {
+		HealthWrapper(@JsonProperty("status") Status status, @JsonProperty("details") Map<String, Object> details) {
 			this.health = Health.status(status).withDetails(details == null ? new HashMap<>() : details).build();
 		}
 
