@@ -82,7 +82,7 @@ public class HealthAggregatorTest {
 	private HealthAggregator healthAggregator;
 
 	@Before
-	public void setup() {
+	public void setupMocks() {
 		BDDMockito.when(this.webClient.get()).thenReturn(this.requestHeadersUriSpec);
 		BDDMockito.when(this.requestHeadersUriSpec.uri(BDDMockito.any(URI.class))).thenReturn(this.requestHeadersSpec);
 		BDDMockito.when(this.requestHeadersSpec.retrieve()).thenReturn(this.responseSpec);

@@ -108,7 +108,7 @@ public class HealthAggregator {
 			this.health = Health.status(status).withDetails(details == null ? new HashMap<>() : details).build();
 		}
 
-		Health getHealth() {
+		protected Health getHealth() {
 			return this.health;
 		}
 	}
