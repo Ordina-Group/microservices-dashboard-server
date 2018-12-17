@@ -35,7 +35,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import reactor.core.publisher.Mono;
 
 import be.ordina.msdashboard.LandscapeWatcher;
-import be.ordina.msdashboard.events.HealthInfoFailed;
+import be.ordina.msdashboard.events.HealthInfoRetrievalFailed;
 import be.ordina.msdashboard.events.HealthInfoRetrieved;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 
@@ -132,9 +132,9 @@ public class HealthAggregatorTest {
 				String.format("Could not retrieve health information for [http://%s:%d/actuator/health]",
 						serviceInstance.getHost(), serviceInstance.getPort()));
 
-		HealthInfoFailed healthInfoFailed = (HealthInfoFailed) this.applicationEventArgumentCaptor.getValue();
-		assertThat(healthInfoFailed).isNotNull();
-		assertThat(healthInfoFailed.getSource()).isEqualTo(serviceInstance);
+		HealthInfoRetrievalFailed healthInfoRetrievalFailed = (HealthInfoRetrievalFailed) this.applicationEventArgumentCaptor.getValue();
+		assertThat(healthInfoRetrievalFailed).isNotNull();
+		assertThat(healthInfoRetrievalFailed.getSource()).isEqualTo(serviceInstance);
 	}
 
 	@Test

@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import be.ordina.msdashboard.LandscapeWatcher;
-import be.ordina.msdashboard.events.HealthInfoFailed;
+import be.ordina.msdashboard.events.HealthInfoRetrievalFailed;
 import be.ordina.msdashboard.events.HealthInfoRetrieved;
 import be.ordina.msdashboard.events.NewServiceInstanceDiscovered;
 
@@ -36,7 +36,6 @@ import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -45,7 +44,6 @@ import org.springframework.web.util.UriComponentsBuilder;
  *
  * @author Dieter Hubau
  */
-@Component("msDashboardHealthAggregator")
 public class HealthAggregator {
 
 	private static final Logger logger = LoggerFactory.getLogger(HealthAggregator.class);
@@ -87,7 +85,7 @@ public class HealthAggregator {
 				.doOnError(exception -> {
 					logger.debug("Could not retrieve health information for [" + uri + "]", exception);
 
-					this.publisher.publishEvent(new HealthInfoFailed(instance));
+					this.publisher.publishEvent(new HealthInfoRetrievalFailed(instance));
 				})
 				.subscribe(healthInfo -> {
 					logger.debug("Found health information for service [{}]", instance.getServiceId());

@@ -15,7 +15,7 @@
  */
 
 /**
- * This is the root package for the microservices dashboard server application.
- * It contains the main annotation to enable the dashboard.
+ * This package contains all public events that are emitted in the microservices server.
+ * Event listeners can react to these events as they see fit.
  */
 package be.ordina.msdashboard.events;

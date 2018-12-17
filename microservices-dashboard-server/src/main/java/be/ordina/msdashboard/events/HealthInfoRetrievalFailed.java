@@ -24,9 +24,9 @@ import org.springframework.context.ApplicationEvent;
  *
  * @author Dieter Hubau
  */
-public class HealthInfoFailed extends ApplicationEvent {
+public class HealthInfoRetrievalFailed extends ApplicationEvent {
 
-	public HealthInfoFailed(ServiceInstance instance) {
+	public HealthInfoRetrievalFailed(ServiceInstance instance) {
 		super(instance);
 	}
 }
