@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-labels: "status: waiting-for-triage", "type: feature-request"
+labels: "status: waiting-for-triage", "type: enhancement"
 
 ---
 
