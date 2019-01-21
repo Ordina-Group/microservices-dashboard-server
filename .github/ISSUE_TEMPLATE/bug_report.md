@@ -31,6 +31,6 @@ If you are still having issues, please be sure to include as much information as
 // example
 ```
 
-Making sure to follow these steps will guarantee the quickest resolution possible.
+Following these steps will guarantee the quickest resolution possible.
 
 Thanks!
