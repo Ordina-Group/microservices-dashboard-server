@@ -53,6 +53,7 @@
 		<maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
 		<disable.checks>false</disable.checks>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
+		<jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
 	</properties>
 
 	<inceptionYear>2015</inceptionYear>
@@ -477,6 +478,7 @@ limitations under the License.
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
+						<version>${jacoco-maven-plugin.version}</version>
 						<executions>
 							<execution>
 								<id>pre-unit-test</id>
