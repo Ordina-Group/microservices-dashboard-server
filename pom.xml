@@ -524,7 +524,7 @@ limitations under the License.
 				<dependency>
 					<groupId>org.sonarsource.java</groupId>
 					<artifactId>sonar-jacoco-listeners</artifactId>
-					<version>3.8</version>
+					<version>5.10.1.16922</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
