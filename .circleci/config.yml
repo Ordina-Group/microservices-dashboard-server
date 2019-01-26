@@ -29,7 +29,10 @@ jobs:
           when: always
           command: |
             mkdir -p jars/
-            find . -type f -regex "microservices-dashboard-server-core/target/.*\.jar" -exec cp {} jars/ \;
+            find . -type f -name "*.jar" -and \( \
+              -path "*/microservices-dashboard-server-core/target/*" \
+              \) \
+              -exec cp {} jars/ \;
       - run:
           name: "Aggregate test results"
           when: always
