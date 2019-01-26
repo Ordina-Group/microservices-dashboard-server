@@ -176,6 +176,7 @@ limitations under the License.
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>${maven-surefire-plugin.version}</version>
 					<configuration>
+						<useSystemClassLoader>false</useSystemClassLoader>
 						<includes>
 							<include>**/*Tests.java</include>
 							<include>**/*Test.java</include>
