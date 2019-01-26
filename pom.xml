@@ -5,7 +5,7 @@
 
 	<groupId>be.ordina</groupId>
 	<artifactId>microservices-dashboard-server</artifactId>
-	<version>2.0.0-BUILD-SNAPSHOT</version>
+	<version>2.0.0.BUILD-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Microservices Dashboard Server</name>
 	<description>Microservices Dashboard Server</description>
@@ -419,6 +419,15 @@ limitations under the License.
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<distributionManagement>
+		<downloadUrl>https://github.com/ordina-jworks</downloadUrl>
+		<snapshotRepository>
+			<id>snapshots</id>
+			<name>JFrog Snapshot Repository</name>
+			<url>https://oss.jfrog.org/artifactory/oss-snapshot-local</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<profiles>
 		<profile>

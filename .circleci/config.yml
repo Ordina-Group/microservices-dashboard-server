@@ -1,0 +1,50 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      _JAVA_OPTIONS: "-Xms1024m -Xmx2048m"
+      TERM: dumb
+    branches:
+      ignore:
+        - gh-pages # list of branches to ignore
+    steps:
+      - checkout
+      - restore_cache:
+          key: ms-dashboard-server-{{ .Branch }}
+      - run:
+          name: "Download dependencies"
+          command: ./mvnw -s .settings.xml -U --fail-never dependency:go-offline || true
+      - save_cache:
+          key: ms-dashboard-server-{{ .Branch }}
+          paths:
+            - ~/.m2
+      - run:
+          name: "Running build"
+          command: ./mvnw -s .settings.xml clean org.jacoco:jacoco-maven-plugin:prepare-agent install -U -P sonar -nsu --batch-mode -Dmaven.test.redirectTestOutputToFile=true -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+      - run:
+          name: "Aggregate built jars"
+          when: always
+          command: |
+            mkdir -p /jars/
+            find . -type f -regex "microservices-dashboard-server-core/target/.*\.jar" -exec cp {} /jars/ \;
+      - run:
+          name: "Aggregate test results"
+          when: always
+          command: |
+            mkdir -p /junit/
+            find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} /junit/ \;
+            bash <(curl -s https://codecov.io/bash)
+      - store_artifacts:
+          path: /jars/
+          destination: artifacts
+      - store_test_results:
+          path: /junit/
+          destination: testartifacts
+notify:
+  webhooks:
+    # A list of hook hashes, containing the url field
+    # gitter hook
+    - url: https://webhooks.gitter.im/e/ab22eaaa0faf911ac32f
