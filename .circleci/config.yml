@@ -28,20 +28,20 @@ jobs:
           name: "Aggregate built jars"
           when: always
           command: |
-            mkdir -p /jars/
-            find . -type f -regex "microservices-dashboard-server-core/target/.*\.jar" -exec cp {} /jars/ \;
+            mkdir -p $CIRCLE_WORKING_DIRECTORY/jars/
+            find . -type f -regex "microservices-dashboard-server-core/target/.*\.jar" -exec cp {} $CIRCLE_WORKING_DIRECTORY/jars/ \;
       - run:
           name: "Aggregate test results"
           when: always
           command: |
-            mkdir -p /junit/
-            find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} /junit/ \;
+            mkdir -p $CIRCLE_WORKING_DIRECTORY/junit/
+            find . -type f -regex ".*/target/.*-reports/.*" -exec cp {} $CIRCLE_WORKING_DIRECTORY/junit/ \;
             bash <(curl -s https://codecov.io/bash)
       - store_artifacts:
-          path: /jars/
+          path: $CIRCLE_WORKING_DIRECTORY/jars/
           destination: artifacts
       - store_test_results:
-          path: /junit/
+          path: $CIRCLE_WORKING_DIRECTORY/junit/
           destination: testartifacts
 notify:
   webhooks:
