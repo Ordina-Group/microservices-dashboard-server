@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-labels: "status: waiting-for-triage", "type: bug"
+labels: 'status: waiting-for-triage, type: bug'
 
 ---
 
