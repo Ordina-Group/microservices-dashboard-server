@@ -7,10 +7,7 @@ jobs:
     environment:
       _JAVA_OPTIONS: "-Xms1024m -Xmx2048m"
       TERM: dumb
-    branches:
-      ignore:
-        - gh-pages # list of branches to ignore
-        - 1.x
+    working_directory: ~/ms-dashboard-server-{{ .Branch }}
     steps:
       - checkout
       - restore_cache:
@@ -47,8 +44,38 @@ jobs:
       - store_test_results:
           path: junit/
           destination: testartifacts
+  update-documentation:
+    machine: true
+    environment:
+      TERM: dumb
+    working_directory: ~/ms-dashboard-server-{{ .Branch }}
+    steps:
+      - checkout
+      - run:
+          name: Updating GitHub Pages
+          command: bash docs/src/main/scripts/ghpages.sh
+
 notify:
   webhooks:
     # A list of hook hashes, containing the url field
     # gitter hook
     - url: https://webhooks.gitter.im/e/ab22eaaa0faf911ac32f
+
+workflows:
+  version: 2
+  build-and-update-documentation:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore:
+                - gh-pages # list of branches to ignore
+                - 1.x
+      - update-documentation:
+          filters:
+            branches:
+              only: master
+            tags:
+              only: /^v.*/
+          requires:
+            - build
