@@ -1,0 +1,51 @@
+:jdkversion: 1.8
+:project-name: microservices-dashboard-server
+:github-tag: master
+:github-repo: ordina-jworks/{project-name}
+
+:github-raw: https://raw.githubusercontent.com/{github-repo}/{github-tag}
+:github-code: https://github.com/{github-repo}/tree/{github-tag}
+
+:gitter-url: https://gitter.im/ordina-jworks/microservices-dashboard
+
+image::https://circleci.com/gh/{github-repo}.svg?style=svg["CircleCI", link="https://circleci.com/gh/{github-repo}"]
+image::https://codecov.io/gh/{github-repo}/branch/{github-tag}/graph/badge.svg["codecov", link="https://codecov.io/gh/{github-repo}"]
+image::https://api.bintray.com/packages/{github-repo}/{project-name}/images/download.svg["Download", link="https://bintray.com/{github-repo}/{project-name}/_latestVersion"]
+image::https://img.shields.io/badge/License-Apache%202-blue.svg["License", link="{github-raw}/LICENSE.txt"]
+image::https://badges.gitter.im/ordina-jworks/microservices-dashboard.svg[Gitter, link="{gitter-url}?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
+
+## Microservices Dashboard Server
+
+### Overview
+
+The primary goal of this project is to provide a server implementation for the Microservices Dashboard UI project.
+This implementation is for now only supporting Spring Boot microservices.
+It will query other Spring Boot applications for their actuator endpoints (such as ```/health```) to get information on their status and their dependencies.
+After gathering these details from all available applications, it will aggregate these into a single snapshot.
+This snapshot can be retrieved by the Microservices Dashboard UI application.
+
+### Reference documentation
+
+To learn everything there is to know about the Microservices Dashboard Server, please consult the http://ordina-jworks.github.io/microservices-dashboard-server/[reference documentation].
+
+### Building from source
+
+The Microservices Dashboard Server requires Java 8 or later and is built using maven:
+
+```bash
+./mvnw install
+```
+
+### Contributing
+
+Contributors to this project agree to uphold its {github-raw}/CODE_OF_CONDUCT.md[code of conduct].
+
+There are several ways in which you can contribute to the Microservices Dashboard Server:
+
+ - File https://github.com/{github-repo}/issues/new/choose[an issue].
+ - Open a https://help.github.com/articles/using-pull-requests/[pull request]. Please see the {github-raw}/CONTRIBUTING.md[contributor guidelines] for details.
+ - Chat with fellow users {gitter-url}[on Gitter].
+
+### Licence
+
+Ordina's Microservices Dashboard Server is open source software released under the {github-raw}/LICENSE.txt[Apache 2.0 license].

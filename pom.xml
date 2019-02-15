@@ -13,6 +13,7 @@
 	<modules>
 		<module>microservices-dashboard-server-core</module>
 		<module>samples</module>
+		<module>docs</module>
 	</modules>
 	<url>https://github.com/ordina-jworks/microservices-dashboard-server</url>
 	<properties>
@@ -54,6 +55,10 @@
 		<disable.checks>false</disable.checks>
 		<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
 		<jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
+
+		<!-- Documentation -->
+		<asciidoctor-maven-plugin.version>1.5.7</asciidoctor-maven-plugin.version>
+		<maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
 	</properties>
 
 	<inceptionYear>2015</inceptionYear>
@@ -430,6 +435,17 @@ limitations under the License.
 		</snapshotRepository>
 	</distributionManagement>
 
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-releases</id>
+			<name>Spring Releases</name>
+			<url>https://repo.spring.io/libs-release-local</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 	<profiles>
 		<profile>
 			<id>bintray</id>
@@ -476,6 +492,157 @@ limitations under the License.
 						</configuration>
 					</plugin>
 				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>docs</id>
+			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.asciidoctor</groupId>
+							<artifactId>asciidoctor-maven-plugin</artifactId>
+							<version>${asciidoctor-maven-plugin.version}</version>
+							<dependencies>
+								<dependency>
+									<groupId>io.spring.asciidoctor</groupId>
+									<artifactId>spring-asciidoctor-extensions</artifactId>
+									<version>0.1.0.RELEASE</version>
+								</dependency>
+							</dependencies>
+							<executions>
+								<execution>
+									<id>generate-doc</id>
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>process-asciidoc</goal>
+									</goals>
+									<configuration>
+										<sourceDocumentName>index.adoc</sourceDocumentName>
+										<backend>html5</backend>
+										<doctype>book</doctype>
+										<attributes>
+											<microservices-dashboard-version>${project.version}</microservices-dashboard-version>
+											<allow-uri-read>true</allow-uri-read>
+											<safe-mode>unsafe</safe-mode>
+										</attributes>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>build-helper-maven-plugin</artifactId>
+							<version>${build-helper-maven-plugin.version}</version>
+							<inherited>false</inherited>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-antrun-plugin</artifactId>
+							<version>${maven-antrun-plugin.version}</version>
+							<dependencies>
+								<dependency>
+									<groupId>ant-contrib</groupId>
+									<artifactId>ant-contrib</artifactId>
+									<version>1.0b3</version>
+									<exclusions>
+										<exclusion>
+											<groupId>ant</groupId>
+											<artifactId>ant</artifactId>
+										</exclusion>
+									</exclusions>
+								</dependency>
+								<dependency>
+									<groupId>org.apache.ant</groupId>
+									<artifactId>ant-nodeps</artifactId>
+									<version>1.8.1</version>
+								</dependency>
+								<dependency>
+									<groupId>org.tigris.antelope</groupId>
+									<artifactId>antelopetasks</artifactId>
+									<version>3.2.10</version>
+								</dependency>
+								<dependency>
+									<groupId>org.jruby</groupId>
+									<artifactId>jruby-complete</artifactId>
+									<version>1.7.17</version>
+								</dependency>
+								<dependency>
+									<groupId>org.asciidoctor</groupId>
+									<artifactId>asciidoctorj</artifactId>
+									<version>1.5.2</version>
+								</dependency>
+							</dependencies>
+							<executions>
+								<execution>
+									<id>readme</id>
+									<phase>process-resources</phase>
+									<goals>
+										<goal>run</goal>
+									</goals>
+									<configuration>
+										<target>
+											<java classname="org.jruby.Main" failonerror="yes">
+												<arg value="${docs.resources.dir}/scripts/generate_readme.sh"/>
+												<arg value="-o"/>
+												<arg value="${main.basedir}/README.adoc"/>
+											</java>
+										</target>
+									</configuration>
+								</execution>
+								<execution>
+									<id>assert-no-unresolved-links</id>
+									<phase>prepare-package</phase>
+									<goals>
+										<goal>run</goal>
+									</goals>
+									<configuration>
+										<target>
+											<fileset id="unresolved.file" dir="${basedir}/target/generated-docs/" includes="**/*.html">
+												<contains text="Unresolved"/>
+											</fileset>
+											<fail message="[Unresolved] Found...failing">
+												<condition>
+													<resourcecount when="greater" count="0" refid="unresolved.file" />
+												</condition>
+											</fail>
+										</target>
+									</configuration>
+								</execution>
+								<execution>
+									<id>setup-maven-properties</id>
+									<phase>validate</phase>
+									<goals>
+										<goal>run</goal>
+									</goals>
+									<configuration>
+										<exportAntProperties>true</exportAntProperties>
+										<target>
+											<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+											<taskdef name="stringutil" classname="ise.antelope.tasks.StringUtilTask"/>
+											<var name="version-type" value="${project.version}"/>
+											<propertyregex property="version-type"
+														   override="true" input="${version-type}" regexp=".*\.(.*)"
+														   replace="\1" />
+											<propertyregex property="version-type"
+														   override="true" input="${version-type}" regexp="(M)\d+"
+														   replace="MILESTONE" />
+											<propertyregex property="version-type"
+														   override="true" input="${version-type}" regexp="(RC)\d+"
+														   replace="MILESTONE" />
+											<propertyregex property="version-type"
+														   override="true" input="${version-type}" regexp="BUILD-(.*)"
+														   replace="SNAPSHOT" />
+											<var name="github-tag" value="v${project.version}"/>
+											<propertyregex property="github-tag" override="true"
+														   input="${github-tag}" regexp=".*SNAPSHOT" replace="master" />
+										</target>
+									</configuration>
+								</execution>
+							</executions>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 			</build>
 		</profile>
 		<profile>

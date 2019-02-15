@@ -1,0 +1,723 @@
+= Microservices Dashboard Reference Guide =
+
+include::attributes.adoc[]
+
+Microservices Dashboard Server Reference Guide
+====================
+Steve De Zitter, Andreas Evers, Dieter Hubau, Tim Ysewyn
+
+*{microservices-dashboard-version}*
+====================
+
+[[what]]
+== What is the Microservices Dashboard? ==
+
+Microservices Dashboard is a simple application to visualize links between microservices and the encompassing ecosystem. This AngularJS application consumes endpoints exposed by microservices-dashboard-server. It displays four columns: UI, Resources, Microservices and Backends. Each of these columns show nodes and links between them. The information for these links come from Spring Boot Actuator health endpoints, pact consumer-driven-contract-tests and hypermedia indexes, which are aggregated in the microservices-dashboard-server project.
+
+=== Driving forces behind the dashboard effort ===
+
+Existing tooling doesn’t expose links between the different components in a microservices architecture::
+- [ ] Eureka shows which microservices are out there
+- [ ] Spring Boot Admin only shows the details of the individual services
+- [ ] Hystrix dashboard shows integration points but not a total view
+- [ ] Zipkin focuses on performance and only shows a temporal view of the connections
+
+Analysts need to know what functionality is out there::
+- [*] They want to see which resources are exposed by what microservices
+- [*] They want to know what services are impacted when a component has to change
+- [*] They like to have an end-to-end trace of where a frontend call goes through
+- [*] They would like to have a view of what’s coming and perhaps give input on that
+
+Developers can benefit from a broader view as well::
+- [*] They like an easy access point for documentation
+- [*] They want to see where which version of their components are deployed
+
+Managers like to have a grip on things::
+- [*] They want to get a sense of compliancy and maturity of the components
+- [*] They want some level of change management
+
+
+[[getting-started]]
+== Getting started ==
+
+TIP: The absolutely simplest way (although not the default way) to get up and running is by <<starting-from-sample,cloning and running a simple sample>>. This is especially handy for people not familiar with Java or maven.
+
+[[default-set-up]]
+=== Default set up ===
+
+First you need to setup a simple Spring Boot project (using http://start.spring.io for example).
+Microservices-dashboard-server requires Java 8 or later.
+
+. Add the microservices-dashboard-server as a dependency to your new Spring Boot's dependencies:
++
+[source,xml,subs="verbatim,attributes"]
+.pom.xml
+----
+<dependency>
+    <groupId>be.ordina</groupId>
+    <artifactId>microservices-dashboard-server</artifactId>
+    <version>{project-version}</version>
+</dependency>
+----
+
+. In case you use a `SNAPSHOT` version, add the JFrog OSS Artifactory repository:
++
+[source,xml,subs="verbatim,attributes"]
+.pom.xml
+----
+<repositories>
+    <repository>
+        <id>oss-snapshots</id>
+        <name>JFrog OSS Snapshots</name>
+        <url>https://oss.jfrog.org/simple/oss-snapshot-local/</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+</repositories>
+----
+
+. Pull in the Microservices Dashboard Server configuration via adding `@EnableMicroservicesDashboardServer` to your configuration:
++
+[source,java]
+----
+@SpringBootApplication
+@EnableMicroservicesDashboardServer
+public class MicroservicesDashboardServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+----
+
+NOTE: There are a number of other ways to set up the Microservices Dashboard. Please refer to the <<alternative-set-up,Alternative set up>> section for more information.
+
+[[default-usage]]
+=== Default usage ===
+
+You can either start the application from within your IDE, or use the command line to build and start the application:
+
+[source,shell,subs="verbatim,attributes"]
+.Using the embedded maven wrapper
+----
+$ mvnw spring-boot:run
+----
+
+[source,shell,subs="verbatim,attributes"]
+.Using your own maven installation
+----
+$ mvn spring-boot:run
+----
+
+If successful, you should see the following output in the log:
+
+> o.s.b.c.e.t.TomcatEmbeddedServletContainer Tomcat started on port(s): 8080 (http)
+
+You should now be able to view the empty dashboard at `http://localhost:8080`.
+
+You can now configure integrations with your ecosystem to start aggregating node information.
+More details on how to do this can be found at the <<aggregation-configuration,Node retrieval configuration>> section.
+
+[[alternative-set-up]]
+== Alternative set up ==
+
+[[deploying-on-standalone-server]]
+=== Deploying on a standalone server ===
+
+If you want to setup the Microservices Dashboard via war-deployment in a servlet-container, please have a look at the http://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#build-tool-plugins-maven-packaging[reference documentation of Spring Boot].
+
+A sample project will be created soon to illustrate this, tracked through this https://github.com/ordina-jworks/microservices-dashboard-server/issues/25[issue].
+
+[[deploying-ui-separately]]
+=== Deploying the UI separately from the server ===
+
+The microservices-dashboard consists of two components: the UI and the server.
+The UI is located under the https://github.com/ordina-jworks/microservices-dashboard[microservices-dashboard repository], while the server is located under the https://github.com/ordina-jworks/microservices-dashboard-server[microservices-dashboard-server repository].
+These two components can either be packaged and deployed together as a single Spring Boot application (as explained in the <<default-set-up,Default set up>> section), or separately as a NodeJS application and a Spring Boot application. +
+In case of the former, the UI is served from the embedded Tomcat or Jetty inside the Spring Boot application. +
+In case of the latter, the UI is ran separately on a NodeJS server, while the Spring Boot application simply exposes the JSON API.
+
+TIP: Deploying the UI separately from the server can be very useful when you want to extend or modify the UI application. Simply build the UI from source and deploy it. No need to package it within the server application first.
+
+[[excluding-ui-from-server]]
+==== Excluding the UI from the Spring Boot application ====
+
+When running the UI separately, ideally the Spring Boot server shouldn't serve the UI in this case.
+
+[source,xml,subs="verbatim,attributes"]
+.pom.xml
+----
+<dependency>
+    <groupId>be.ordina</groupId>
+    <artifactId>microservices-dashboard-server</artifactId>
+    <version>{project-version}</version>
+    <exclusions>
+      <exclusion>
+        <artifactId>microservices-dashboard-ui</artifactId>
+        <groupId>be.ordina</groupId>
+       </exclusion>
+    </exclusions>
+</dependency>
+----
+
+[[building-ui-from-source]]
+==== Building and running the UI from source ====
+
+. First a basic build should be done:
++
+[source,shell,subs="verbatim,attributes"]
+----
+$ npm install
+----
+
+. Then bower dependencies should be installed:
++
+[source,shell,subs="verbatim,attributes"]
+----
+$ bower install
+----
+
+. Use gulp to serve the resources using the configuration file:
++
+[source,shell,subs="verbatim,attributes"]
+----
+$ gulp serve --standalone
+----
+You can configure the location of the dashboard server by modifying the `baseUrl` in `gulp/conf.js`
+
+TIP: If you want to run the UI on an existing server, with potentially another port, execute `$ gulp build --standalone` and deploy the `dist` folder on that server.
+
+IMPORTANT: The Microservices Dashboard server needs to be started to get any data in the dashboard.
+
+[[starting-from-sample]]
+=== Starting from a sample ===
+
+Starting from a sample application is an easy and quick way to get up and running, without having to write any code yourself.
+This can be particulary useful for people not familiar with Java and who simply want to configure and run the application without any custom extensions.
+
+TIP: There are other samples available as well. See the <<samples,Samples>> section for more information on what they contain.
+
+[[starting-from-sample-set-up]]
+
+. The first step is to clone the Git repository:
++
+[source,shell,subs="verbatim,attributes"]
+----
+$ git clone https://github.com/ordina-jworks/microservices-dashboard-server
+----
+
+. Once the clone is complete, you're ready to get the service up and running:
++
+[source,shell,subs="verbatim,attributes"]
+----
+$ cd microservices-dashboard-server/samples/microservices-dashboard-simple
+$ ./mvnw spring-boot:run
+----
+
+[[aggregation-configuration]]
+== Node retrieval configuration ==
+
+Nodes are retrieved by node aggregators.
+Each of these aggregators calls certain resources which expose information that can be mapped to nodes.
+These nodes are then shown on the dashboard in one of the four columns.
+You can simply use the default aggregators and configure your ecosystem as we have intended it to be configured, or you can extend or override them.
+You can even write your own aggregators for resources we haven't covered yet.
+Configuring the existing aggregators is explained below.
+If you wish to extend or override an aggregator, have a look at <<aggregation-extending,Extending existing aggregators>>.
+And finally writing your own aggregator is covered in the <<aggregation-writing-your-own, Writing your own aggregator>> section.
+
+[[aggregation-provided]]
+=== Provided aggregators ===
+
+Currently four aggregators are provided out-of-the-box:
+
+* Health aggregator _(requires service discovery)_
+* Index aggregator _(requires service discovery)_
+* Mappings aggregator _(requires service discovery)_
+* Pact aggregator _(requires pact broker)_
+
+[WARNING]
+====
+Every aggregator has a set of properties available which can easily be changed in `application.yml` or `application.properties` in your Spring Boot application.
+Setting maps and lists in properties is less straightforward.
+
+Configuring a map can be done as follows:
+[source,yaml,subs="verbatim,attributes"]
+.Using yaml
+----
+msdashboard.health.requestHeaders:
+  headername1: headervalue1
+  headername2: headervalue2
+----
+[source,properties,subs="verbatim,attributes"]
+.Using properties
+----
+msdashboard.health.requestHeaders.headername1=headervalue1
+msdashboard.health.requestHeaders.headername2=headervalue2
+----
+Configuring a list can be done as follows:
+[source,yaml,subs="verbatim,attributes"]
+.Using yaml
+----
+msdashboard.health.filteredServices:
+  - hystrix
+  - diskSpace
+----
+[source,properties,subs="verbatim,attributes"]
+.Using properties
+----
+msdashboard.health.filteredServices[0]=hystrix
+msdashboard.health.filteredServices[1]=diskSpace
+----
+====
+
+[[aggregation-health]]
+==== Health aggregator ====
+
+The health aggregator retrieves and aggregates nodes from health information exposed by http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#production-ready[Spring Boot's Actuator].
+
+===== Prerequisites =====
+
+This aggregator uses service discovery to find available services.
+More details on using service discovery is covered in section <<aggregation-service-discovery,Using service discovery>>.
+
+In case Spring Boot is not used in a microservice you would like to retrieve health information of, your service must comply to the health format exposed by Spring Boot under the `/health` endpoint.
+
+[source,json,subs="verbatim,attributes"]
+.Example of a health response
+----
+{
+  "status": "UP",
+  "foo": "bar",
+  "serviceWhichThisServiceCalls": {
+    "status": "UNKNOWN",
+    "type": "SOAP",
+    "group": "SVCGROUP"
+  },
+  "anotherServiceWhichThisServiceCalls": {
+    "status": "DOWN",
+    "type": "REST",
+    "group": "SVCGROUP",
+    "foo": "bar"
+  }
+}
+----
+
+The only required field is `status`.
+Any field which isn't an array, is added to the details of the current node.
+
+TIP: The Spring Boot `/health` endpoint is part of its Actuator functionality.
+A detailed description of its purpose and characteristics can be found in the http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#production-ready[reference documentation].
+
+===== Aggregation =====
+
+For each service returned from the service discovery, a top level node is created.
+For each nested entity found in the response of each health response, a node is created and being linked from the top level node.
+
+.Health aggregator configuration options
+|===
+| Property name |Description |Default value
+
+| msdashboard.health.requestHeaders
+| Map of request header keys and values used for calling the services' health endpoint.
+|
+
+| msdashboard.health.filteredServices
+| List of names of services which should be ignored during health aggregation.
+| hystrix, diskSpace, configServer, discovery
+|===
+
+[[aggregation-index]]
+==== Index aggregator ====
+
+The index aggregator retrieves and aggregates nodes from custom index endpoints implementing hypermedia.
+Currently only HAL is supported as mediatype.
+See http://projects.spring.io/spring-hateoas/[Spring HATEOAS] to easily implement said endpoints.
+
+===== Prerequisites =====
+
+This aggregator uses service discovery to find available services.
+More details on using service discovery is covered in section <<aggregation-service-discovery,Using service discovery>>.
+
+Your service must comply to the HAL format and expose an index under the root (`/`) endpoint.
+
+[source,json,subs="verbatim,attributes"]
+.Example of an index response
+----
+{
+  "_links": {
+    "svc1:svc1rsc1": {
+        "href": "http://host0015.local:8301/svc1rsc1",
+        "templated": true
+    },
+    "svc1:svc1rsc2": {
+        "href": "http://host0015.local:8301/svc1rsc2",
+        "templated": true
+    }
+  }
+}
+----
+
+===== Aggregation =====
+
+For each service returned from the service discovery, a top level node is created.
+For each unfiltered link found in the response of each index response, a node is created and being linked from the top level node.
+
+.Index aggregator configuration options
+|===
+| Property name |Description |Default value
+
+| msdashboard.index.enabled
+| Index aggregator is enabled
+| false
+
+| msdashboard.index.requestHeaders
+| Map of request header keys and values used for calling the services' mappings endpoint.
+|
+
+| msdashboard.index.filteredServices
+| List of names of services which should be ignored during index aggregation.
+| hystrix, diskSpace, configServer, discovery
+|===
+
+[[aggregation-mappings]]
+==== Mappings aggregator ====
+
+The mappings aggregator retrieves and aggregates nodes from mappings information exposed by http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#production-ready[Spring Boot's Actuator].
+
+===== Prerequisites =====
+
+This aggregator uses service discovery to find available services.
+More details on using service discovery is covered in section <<aggregation-service-discovery,Using service discovery>>.
+
+In case Spring Boot is not used in a microservice you would like to retrieve mappings of, your service must comply to the mappings format exposed by Spring Boot under the `/mappings` endpoint.
+
+[source,json,subs="verbatim,attributes"]
+.Example of a mappings response
+----
+{
+  "{[/endpoint1],methods=[GET],produces=[application/json]}" : {
+    "bean" : "requestMappingHandlerMapping",
+    "method" : "public java.util.Date be.ordina.controllers.Endpoint1Controller.retrieveDate(java.util.Date)"
+  },
+  "{[/endpoint2],methods=[GET, POST]}" : {
+    "bean" : "requestMappingHandlerMapping",
+    "method" : "public void be.ordina.controllers.Endpoint2Controller.createInformation(be.ordina.model.Information)"
+  }
+}
+----
+
+The only required segment is the endpoint in the key.
+The endpoint should be relative (starting with a slash), between brackets and part of an array wrapped in quotes.
+The smallest accepted mapping key is the following:
+`"{[/]}"`.
+Consequentially, the smallest accepted mapping response is the following: `{"{[/]}" : {}}`.
+
+Any endpoint with a method signature containing `org.springframework` will be ignored.
+
+TIP: The Spring Boot `/health` endpoint is part of its Actuator functionality.
+A detailed description of its purpose and characteristics can be found in the http://docs.spring.io/spring-boot/docs/current-SNAPSHOT/reference/htmlsingle/#production-ready[reference documentation].
+
+===== Aggregation =====
+
+For each service returned from the service discovery, a top level node is created.
+For each unfiltered mapping found in the response of each mappings response, a node is created and being linked to the top level node.
+
+.Mappings aggregator configuration options
+|===
+| Property name |Description |Default value
+
+| msdashboard.mappings.enabled
+| Mappings aggregator is enabled
+| true
+
+| msdashboard.mappings.requestHeaders
+| Map of request header keys and values used for calling the services' mappings endpoint.
+|
+
+| msdashboard.mappings.filteredServices
+| List of names of services which should be ignored during health aggregation.
+| hystrix, diskSpace, configServer, discovery
+|===
+
+[[aggregation-pact]]
+==== Pact aggregator ====
+
+The pacts aggregator retrieves and aggregates nodes from information exposed by the https://github.com/bethesque/pact_broker[Pact broker].
+The broker holds contracts between producers and consumers which describe their interactions.
+
+===== Prerequisites =====
+
+The Pact broker should expose a JSON resource containing links to the latest pacts.
+Out of this response, we extract all the links to the pacts with the following default jsonPath:
+```jsonpath
+$.pacts[*]._links.self[0].href
+```
+NOTE: You can change many of these settings by using the properties.
+See below for the available properties and their default values.
+
+Once the links to the pacts are retrieved, each pact will be called and processed.
+Please refer to the https://github.com/realestate-com-au/pact[Pact] documentation for in-depth details on what Pact contracts should look like.
+
+We expect only a couple fields to be present:
+
+```jsonpath
+$.interactions[*].request.path
+$.provider.name
+$.consumer.name
+```
+
+===== Aggregation =====
+
+For each interaction found in each contract returned by the pact broker, nodes and links are being created for its consumer and producer.
+
+.Pact aggregator configuration options
+|===
+| Property name |Description |Default value
+
+| msdashboard.pact.requestHeaders
+| Map of request header keys and values used for calling the services' mappings endpoint.
+|
+
+| msdashboard.pact.filteredServices
+| List of names of services which should be ignored during health aggregation.
+| hystrix, diskSpace, configServer, discovery
+
+| pact-broker.url
+| The url to the pact broker.
+| http://localhost:8089
+
+| pact-broker.latest-url
+| The relative url to the list of pacts.
+| /pacts/latest
+
+| pact-broker.self-href-jsonPath
+| The jsonPath to retrieve the links to the individual pact contracts.
+| $.pacts[*]._links.self[0].href
+|===
+
+[[aggregation-service-discovery]]
+=== Using service discovery ===
+
+We are using the `org.springframework.cloud.client.discovery.DiscoveryClient` abstraction, which means that we support any implementation of said interface.
+At the time of writing Eureka, Zookeeper and Consul.io are supported, although the Spring Cloud team might add more at any moment.
+
+==== Enabling service discovery ====
+
+. Add a discovery dependency to your `pom.xml` file:
++
+[source,xml,subs="verbatim,attributes",indent=0,role="primary"]
+.Eureka
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-netflix</artifactId>
+            <version>1.1.2.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-eureka</artifactId>
+    </dependency>
+</dependencies>
+----
++
+[source,xml,subs="verbatim,attributes",indent=0,role="secondary"]
+.Consul
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-consul-dependencies</artifactId>
+            <version>1.0.1.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-consul-all</artifactId>
+    </dependency>
+</dependencies>
+----
++
+[source,xml,subs="verbatim,attributes",indent=0,role="tertiary"]
+.Zookeeper
+----
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-zookeeper-dependencies</artifactId>
+            <version>1.0.1.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-zookeeper-discovery</artifactId>
+    </dependency>
+</dependencies>
+----
+
+. In case you haven't used the default location for your service registry (see Spring Cloud documentation for defaults), you can specify a custom url to the registry:
++
+.Eureka
+http://cloud.spring.io/spring-cloud-static/spring-cloud.html#_registering_with_eureka[Registring with Eureka]
++
+.Consul
+http://cloud.spring.io/spring-cloud-consul/spring-cloud-consul.html#_registering_with_consul[Registring with Consul]
++
+.Zookeeper
+http://cloud.spring.io/spring-cloud-zookeeper/spring-cloud-zookeeper.html#_registering_with_zookeeper[Registring with Zookeeper]
+
+[NOTE]
+====
+In case you'd like to register the dashboard in the service registry as well, simply add the `@EnableEurekaClient` annotation to the Microservices Dashboard Server application:
+
+[source,java]
+----
+@EnableEurekaClient
+@SpringBootApplication
+@EnableMicroservicesDashboardServer
+public class MicroservicesDashboardServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+----
+====
+
+[[aggregation-extending]]
+=== Extending existing aggregators ===
+
+More information will be added as soon as possible.
+
+[[aggregation-writing-your-own]]
+=== Writing your own aggregator ===
+
+When writing your own aggregator, it is important to understand how http://reactivex.io/[ReactiveX] works.
+We use observables from https://github.com/ReactiveX/RxJava[RxJava] in order to make optimal use of the system resources the microservices-dashboard-server runs on.
+
+The `NodeAggregator` https://github.com/ordina-jworks/microservices-dashboard-server/blob/master/microservices-dashboard-server/src/main/java/be/ordina/msdashboard/aggregators/NodeAggregator.java[interface] exposes a single method:
+```java
+Observable<Node> aggregateNodes();
+```
+The easiest way to conform to this interface is to implement whichever logic you like, and in the end map the result to an observable as such:
+```java
+return Observable.from(nodes);
+```
+While this may be the easiest way to implement an aggregator, it probably isn't the most optimized way.
+Better would be to embrace observables from the start by using for instance https://github.com/ReactiveX/RxNetty[RxNetty] when you're calling external resources to fetch node information.
+You can find examples in the existing out-of-the-box aggregators, and you can reuse the useful `NettyServiceCaller` https://github.com/ordina-jworks/microservices-dashboard-server/blob/master/microservices-dashboard-server/src/main/java/be/ordina/msdashboard/aggregators/NettyServiceCaller.java[class] to work with observables from the source.
+
+==== Dealing with exceptions ====
+
+When errors occur during the treatment of an observable, its default behaviour is to terminate the emission of more information.
+While this might be desirable when reading a continuous stream of information, in our experience it often doesn't really match with our use case.
+
+Retrying the observable could seem the right course of action, if it wouldn't be for the fact that on retry the observable starts emitting information from the start.
+In other words, in case your observable emitting ten nodes, throws an exception on the fifth node, retrying will re-emit node one until five where it will terminate for the same exception again.
+
+The solution to this problem is turning the observable into a hot observable with autoconnection of the first subscriber:
+```java
+RxNetty.createHttpRequest(request)
+                .publish()
+                .autoConnect()
+```
+Or similarly:
+```java
+Observable.from(discoveryClient.getServices())
+                .subscribeOn(Schedulers.io())
+                .publish()
+                .autoConnect()
+```
+
+[[graph-configuration]]
+== Graph configuration ==
+
+More information will be added as soon as possible.
+
+[[graph-configuration-lanes]]
+== Lanes configuration ==
+
+Currently we support 4 types of lane, based on the results the aggregators return.
+
+- UI
+- Resources
+- Microservices
+- Backends
+
+The last lane constains all the nodes that don't belong to the previous 3.
+To change the label in the JSON output, you just need  to rename the corresponding property.
+
+.Lane configuration options
+|===
+| Property name |Default value
+
+| msdashboard.graph.ui
+| UI
+
+| msdashboard.graph.resources
+| Resources
+
+| msdashboard.graph.microservices
+| Microservices
+
+| msdashboard.graph.backends
+| Backends
+|===
+
+
+[[samples]]
+== Samples ==
+
+In case you simply want to get started with the Microservices Dashboard, you can use a sample to get up an running quickly.
+The basics - including getting them up and running - are described in the <<starting-from-sample,Starting from a sample>> section.
+
+Currently two working samples are available: simple and simple-mocks.
+
+[[samples-simple]]
+=== Sample 1: microservices-dashboard-simple ===
+The simple sample is a great way to get up and running quickly without any mocks.
+You can use this as a base for your own version of the microservices-dashboard.
+
+[[samples-simple-mocks]]
+=== Sample 2: microservices-dashboard-simple-mocks ===
+This sample builds on top of the simple sample, with mocks enabled.
+
+Currently it contains mocks for indexes, healths and pacts.
+
+[[extending]]
+== Extending the Microservices Dashboard ==
+
+First have a look at the properties exposed by the server application for easy configuration.
+If properties won't suffice, almost every bean of the Microservices Dashboard can be overridden by its conditional nature.
+Simply create a bean of the same type and/or name and add your own logic to it.
+
+More information will be added as soon as possible.
+
+[[troubleshooting]]
+== Troubleshooting ==
+
+For remote debugging, run the following command:
+
+```bash
+$ mvnw install
+$ java -jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 target/*.jar
+```
+
+To enable Spring debug logging, add ```--debug``` to the command.
+
+Make sure to use actuator endpoints such as ```/autoconfig``` and ```/beans``` for validating the right beans have been loaded.
