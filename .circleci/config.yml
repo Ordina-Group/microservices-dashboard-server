@@ -103,9 +103,9 @@ workflows:
                 - gh-pages # list of branches to ignore
                 - 1.x
       - deploy-snapshot:
-#          filters:
-#            branches:
-#              only: master
+          filters:
+            branches:
+              only: master
           requires:
             - build
       - update-documentation:
