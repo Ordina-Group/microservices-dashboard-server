@@ -53,7 +53,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: ms-dashboard-server-snapshot-build
+          key: ms-dashboard-server-snapshot-build
       - run:
           name: Deploy snapshot to JFrog
           command: |
