@@ -44,6 +44,24 @@ jobs:
       - store_test_results:
           path: junit/
           destination: testartifacts
+  deploy-snapshot:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    environment:
+      TERM: dumb
+    working_directory: ~/ms-dashboard-server
+    steps:
+      - checkout
+      - restore_cache:
+        key: ms-dashboard-server-snapshot-build
+      - run:
+          name: Deploy snapshot to JFrog
+          command: |
+            ./mvnw -s .settings.xml deploy -Dmaven.test.skip=true
+      - save_cache:
+          key: ms-dashboard-server-snapshot-build
+          paths:
+            - ~/.m2
   update-documentation:
     docker:
       - image: circleci/openjdk:8-jdk
@@ -84,6 +102,12 @@ workflows:
               ignore:
                 - gh-pages # list of branches to ignore
                 - 1.x
+      - deploy-snapshot:
+#          filters:
+#            branches:
+#              only: master
+          requires:
+            - build
       - update-documentation:
           filters:
             branches:
