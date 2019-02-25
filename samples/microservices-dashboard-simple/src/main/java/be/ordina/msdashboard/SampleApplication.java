@@ -16,11 +16,9 @@
 
 package be.ordina.msdashboard;
 
-import be.ordina.msdashboard.discovery.ApplicationFilter;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * Microservices Dashboard Server application that uses the minimal required configuration to correctly function.
@@ -28,15 +26,10 @@ import org.springframework.context.annotation.Bean;
  * @author Tim Ysewyn
  */
 @SpringBootApplication
+@EnableDiscoveryClient
 public class SampleApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SampleApplication.class, args);
 	}
-
-	@Bean
-	public ApplicationFilter kubernetesFilter() {
-		return "microservices-dashboard"::equalsIgnoreCase;
-	}
-
 }
