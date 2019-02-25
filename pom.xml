@@ -306,6 +306,7 @@ limitations under the License.
 						</execution>
 					</executions>
 					<configuration>
+						<!--suppress UnresolvedMavenProperty -->
 						<mainClass>${start-class}</mainClass>
 					</configuration>
 				</plugin>
@@ -527,7 +528,7 @@ limitations under the License.
 					<plugin>
 						<artifactId>maven-javadoc-plugin</artifactId>
 						<configuration>
-							<additionalparam>-Xdoclint:none</additionalparam>
+							<doclint>none</doclint>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -622,6 +623,7 @@ limitations under the License.
 									<configuration>
 										<target>
 											<java classname="org.jruby.Main" failonerror="yes">
+												<!--suppress UnresolvedMavenProperty -->
 												<arg value="${docs.resources.dir}/scripts/generate_readme.sh"/>
 												<arg value="-o"/>
 												<arg value="${main.basedir}/README.adoc"/>
@@ -660,19 +662,24 @@ limitations under the License.
 											<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
 											<taskdef name="stringutil" classname="ise.antelope.tasks.StringUtilTask"/>
 											<var name="version-type" value="${project.version}"/>
+											<!--suppress UnresolvedMavenProperty -->
 											<propertyregex property="version-type"
 														   override="true" input="${version-type}" regexp=".*\.(.*)"
 														   replace="\1" />
+											<!--suppress UnresolvedMavenProperty -->
 											<propertyregex property="version-type"
 														   override="true" input="${version-type}" regexp="(M)\d+"
 														   replace="MILESTONE" />
+											<!--suppress UnresolvedMavenProperty -->
 											<propertyregex property="version-type"
 														   override="true" input="${version-type}" regexp="(RC)\d+"
 														   replace="MILESTONE" />
+											<!--suppress UnresolvedMavenProperty -->
 											<propertyregex property="version-type"
 														   override="true" input="${version-type}" regexp="BUILD-(.*)"
 														   replace="SNAPSHOT" />
 											<var name="github-tag" value="v${project.version}"/>
+											<!--suppress UnresolvedMavenProperty -->
 											<propertyregex property="github-tag" override="true"
 														   input="${github-tag}" regexp=".*SNAPSHOT" replace="master" />
 										</target>
@@ -725,6 +732,7 @@ limitations under the License.
 						<version>${maven-surefire-plugin.version}</version>
 						<configuration>
 							<!-- Sets the VM argument line used when unit tests are run. -->
+							<!--suppress UnresolvedMavenProperty -->
 							<argLine>${surefireArgLine}</argLine>
 							<properties>
 								<property>
