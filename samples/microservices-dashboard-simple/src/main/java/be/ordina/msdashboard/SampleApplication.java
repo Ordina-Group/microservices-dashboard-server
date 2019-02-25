@@ -18,7 +18,6 @@ package be.ordina.msdashboard;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * Microservices Dashboard Server application that uses the minimal required configuration to correctly function.
@@ -26,7 +25,6 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  * @author Tim Ysewyn
  */
 @SpringBootApplication
-@EnableDiscoveryClient
 public class SampleApplication {
 
 	public static void main(String[] args) {
