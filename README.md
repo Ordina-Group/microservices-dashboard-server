@@ -1,0 +1,1 @@
+This has moved into https://github.com/ordina-jworks/microservices-dashboard/
